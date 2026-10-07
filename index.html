@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <title>Aevum</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="brand">
+        <img class="infinity" src="./infinity.png?v=2" alt="" />
+        <h1>Aevum</h1>
+      </header>
+
+      <section class="status-card" aria-label="Состояние сети">
+        <p class="line">
+          <span class="dot">◉</span>
+          <strong class="title">AEVUM VPN</strong>
+        </p>
+        <p class="line">
+          <span class="dot">◉</span>
+          <span class="label">STATUS:</span>
+          <span class="on">ON</span>
+        </p>
+        <p class="line">
+          <span class="dot">◉</span>
+          <span class="label">LOCATION:</span>
+        </p>
+        <div class="loc-list" id="loc-list"></div>
+        <div class="status-foot">
+          <span class="protected">
+            <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
+              <circle cx="10" cy="10" r="9" fill="#3d8f5a" />
+              <path
+                d="M6 10.2 8.6 13l5.4-6"
+                fill="none"
+                stroke="#eaf6ee"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            PROTECTED
+          </span>
+          <span class="foot-brand">AEVUM</span>
+        </div>
+      </section>
+
+      <section class="plan-card" aria-label="Подписка">
+        <div class="plan-row">
+          <span class="plan-label">Подписка:</span>
+          <span class="plan-active">
+            <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
+              <circle cx="10" cy="10" r="9" fill="#3d8f5a" />
+              <path
+                d="M6 10.2 8.6 13l5.4-6"
+                fill="none"
+                stroke="#eaf6ee"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            ACTIVE
+          </span>
+        </div>
+        <button class="pay-btn" type="button" id="pay-btn">Продлить подписку</button>
+      </section>
+
+      <section class="connect" aria-label="Способ подключения">
+        <h2 class="connect-title">Способ подключения:</h2>
+        <a class="connect-btn connect-primary" href="./download.html">
+          <span>1. Скачать приложение</span>
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path
+              d="M12 3v12m0 0 4.5-4.5M12 15 7.5 10.5M5 19h14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
+        <a class="connect-btn connect-secondary" href="./start.html">
+          <span>2. Запустить VPN</span>
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path d="M9 7.2v9.6L18 12 9 7.2Z" fill="currentColor" />
+          </svg>
+        </a>
+      </section>
+
+      <div class="fade-line" aria-hidden="true"></div>
+
+      <nav class="tiles" aria-label="Дополнительно">
+        <a class="tile" href="./partner.html">
+          <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+            <circle cx="9" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.7" />
+            <path
+              d="M5.2 16.8c.5-2.6 2.1-4 3.8-4s3.3 1.4 3.8 4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+            />
+            <circle cx="16.2" cy="8.6" r="2.1" fill="none" stroke="currentColor" stroke-width="1.7" />
+            <path
+              d="M13.2 16.8c.4-2.1 1.7-3.3 3-3.3s2.6 1.2 3 3.3"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+            />
+          </svg>
+          Партнёрка
+        </a>
+        <a class="tile" href="./config.html">
+          <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+            <path
+              d="M9.6 14.4 14.4 9.6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+            <path
+              d="M10.2 8.1a3.4 3.4 0 0 1 4.8 0l.9.9a3.4 3.4 0 0 1 0 4.8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+            <path
+              d="M13.8 15.9a3.4 3.4 0 0 1-4.8 0l-.9-.9a3.4 3.4 0 0 1 0-4.8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </svg>
+          Конфиг
+        </a>
+        <a class="tile" href="./about.html">
+          <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+            <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.7" />
+            <path d="M12 11.2V16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            <circle cx="12" cy="8.4" r="1" fill="currentColor" />
+          </svg>
+          О нас
+        </a>
+      </nav>
+
+      <p class="tag">
+        PRIVATE
+        <img class="tag-infinity" src="./infinity.png?v=2" alt="" />
+        FAST
+        <img class="tag-infinity" src="./infinity.png?v=2" alt="" />
+        SAFETY
+      </p>
+    </main>
+    <p class="toast" id="toast" hidden></p>
+    <script src="./app.js"></script>
+  </body>
+</html>

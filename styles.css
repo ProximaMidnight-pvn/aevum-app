@@ -498,6 +498,10 @@ button {
   font-size: 14px;
 }
 
+.page-copy p + p {
+  margin-top: 8px;
+}
+
 .fade-line {
   height: 1px;
   margin: 18px 4px 16px;
@@ -693,13 +697,20 @@ button {
 }
 
 .download-back {
-  margin: 0 0 12px;
-  padding: 0;
-  border: none;
-  background: none;
-  color: rgba(243, 238, 230, 0.62);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 0 0 16px;
+  padding: 13px 16px;
+  border-radius: 16px;
+  border: 1px solid #d7e3a4;
+  background: rgba(92, 104, 58, 0.45);
+  color: #e7f0c4;
   font: inherit;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   cursor: pointer;
 }
 

@@ -433,6 +433,26 @@ button {
   background: var(--btn-press);
 }
 
+.pay-btn.owner-plan {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  letter-spacing: 0.18em;
+  font-weight: 600;
+  cursor: default;
+}
+
+.pay-btn.owner-plan:active {
+  background: var(--btn);
+}
+
+.pay-btn.owner-plan img {
+  width: 46px;
+  height: auto;
+  display: block;
+}
+
 .text-link {
   color: var(--gold);
   font-size: 14px;

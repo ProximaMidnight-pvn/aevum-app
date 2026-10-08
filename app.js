@@ -70,10 +70,36 @@ const OS_ICONS = {
     '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M3 5.2 10.2 4.2v6.7H3V5.2zm8.2-1.1L21 2.6v8.3h-9.8V4.1zM3 12.1h7.2v6.8L3 17.9v-5.8zm8.2 0H21v8.4l-9.8-1.4v-7z"/></svg>',
 };
 
-const tg = window.Telegram?.WebApp;
+const OWNER_ID = 1450200632;
+const OWNER_NAME = "cameonurface";
+
+function telegramApp() {
+  return window.Telegram?.WebApp;
+}
+
+function isOwner() {
+  const user = telegramApp()?.initDataUnsafe?.user;
+  if (!user) return false;
+  if (Number(user.id) === OWNER_ID) return true;
+  return String(user.username || "").toLowerCase() === OWNER_NAME;
+}
+
+function renderOwnerPlan() {
+  const button = document.getElementById("pay-btn");
+  if (!button || !isOwner()) return;
+  button.classList.add("owner-plan");
+  button.replaceChildren();
+  const label = document.createElement("span");
+  label.textContent = "INFINITY";
+  const mark = document.createElement("img");
+  mark.src = "./infinity.png?v=2";
+  mark.alt = "";
+  button.append(label, mark);
+}
 
 function openExternal(url) {
   if (!url) return;
+  const tg = telegramApp();
   if (tg?.openLink) {
     tg.openLink(url);
     return;
@@ -86,7 +112,7 @@ function openPayment() {
 }
 
 function currentPlatform() {
-  const platform = (tg?.platform || "").toLowerCase();
+  const platform = (telegramApp()?.platform || "").toLowerCase();
   const ua = navigator.userAgent || "";
   if (platform === "ios" || /iPhone|iPad|iPod/.test(ua)) return "ios";
   if (platform === "android" || /Android/.test(ua)) return "android";
@@ -301,7 +327,7 @@ function renderLocations() {
 
 function notifyBot(action) {
   try {
-    tg?.sendData?.(JSON.stringify({ action }));
+    telegramApp()?.sendData?.(JSON.stringify({ action }));
   } catch {
     /* sendData works only inside Telegram */
   }
@@ -322,12 +348,17 @@ renderRipple();
 renderLocations();
 renderDownloads();
 renderLaunch();
-document.getElementById("pay-btn")?.addEventListener("click", openPayment);
+renderOwnerPlan();
+document.getElementById("pay-btn")?.addEventListener("click", () => {
+  if (isOwner()) return;
+  openPayment();
+});
 
 document.querySelectorAll("[data-toast]").forEach((button) => {
   button.addEventListener("click", () => toast(button.dataset.toast));
 });
 
+const tg = telegramApp();
 if (tg) {
   tg.ready();
   tg.expand();

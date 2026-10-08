@@ -1226,7 +1226,16 @@ button {
 }
 
 .pay-methods .pay-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   margin: 0;
+}
+
+.pay-emoji {
+  font-size: 18px;
+  line-height: 1;
 }
 
 .pay-page .plan-card {

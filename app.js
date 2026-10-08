@@ -100,7 +100,11 @@ function renderPlanUntil() {
 
 function renderOwnerPlan() {
   const button = document.getElementById("pay-btn");
-  if (!button || !isOwner()) return;
+  const tariffs = document.getElementById("tariffs");
+  if (!isOwner()) return;
+  if (tariffs) tariffs.hidden = true;
+  if (!button) return;
+  button.hidden = false;
   button.classList.add("owner-plan");
   button.replaceChildren();
   const label = document.createElement("span");
@@ -401,6 +405,17 @@ preserveAppLinks();
 document.getElementById("pay-btn")?.addEventListener("click", () => {
   if (isOwner()) return;
   openPayment();
+});
+
+document.querySelectorAll("[data-plan]").forEach((button) => {
+  button.addEventListener("click", () => {
+    if (isOwner()) return;
+    if (!PAYMENT_URL) {
+      toast("Оплата через ЮKassa подключится следующим шагом.");
+      return;
+    }
+    openPayment();
+  });
 });
 
 document.querySelectorAll("[data-toast]").forEach((button) => {

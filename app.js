@@ -312,6 +312,43 @@ function renderRipple() {
   window.setTimeout(play, firstMs);
 }
 
+function preserveAppLinks() {
+  const search = window.location.search;
+  if (!search) return;
+  document.querySelectorAll("a[href]").forEach((link) => {
+    const href = link.getAttribute("href") || "";
+    if (href.startsWith("./") && href.includes(".html") && !href.includes("?")) {
+      link.setAttribute("href", href + search);
+    }
+  });
+}
+
+function renderConfig() {
+  const page = document.getElementById("config-page");
+  if (!page) return;
+  const params = new URLSearchParams(window.location.search);
+  const subscription = params.get("config") || "";
+  const key = params.get("key") || "";
+  const subNode = document.getElementById("sub-url");
+  const keyNode = document.getElementById("de-key");
+  const copySub = document.getElementById("copy-sub");
+  const copyKey = document.getElementById("copy-key");
+
+  if (subNode && subscription) subNode.textContent = subscription;
+  if (keyNode && key) keyNode.textContent = key;
+
+  const bindCopy = (button, value, done) => {
+    if (!button) return;
+    button.addEventListener("click", () => {
+      if (!value) return;
+      copyText(value);
+      button.textContent = done;
+    });
+  };
+  bindCopy(copySub, subscription, "Ссылка скопирована");
+  bindCopy(copyKey, key, "Ключ скопирован");
+}
+
 function renderLocations() {
   const root = document.getElementById("loc-list");
   if (!root) return;
@@ -349,6 +386,8 @@ renderLocations();
 renderDownloads();
 renderLaunch();
 renderOwnerPlan();
+renderConfig();
+preserveAppLinks();
 document.getElementById("pay-btn")?.addEventListener("click", () => {
   if (isOwner()) return;
   openPayment();

@@ -17,16 +17,73 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="app">
+    <main class="app" id="config-page">
       <header class="brand">
-        <img class="infinity" src="./infinity.png" alt="" />
+        <img class="infinity" src="./infinity.png?v=2" alt="" />
         <h1>Aevum</h1>
       </header>
-      <section class="plan-card page-copy">
-        <h2>Конфиг</h2>
-        <p id="page-info">Информация появится позже.</p>
-        <a class="pay-btn" href="./index.html">Назад</a>
+
+      <h2 class="config-title">Конфигурация</h2>
+
+      <section class="config-block" aria-label="Ссылка подписки">
+        <h3>Ссылка подписки</h3>
+        <div class="config-card">
+          <p class="config-value" id="sub-url">Ссылка появится после /start в боте.</p>
+          <button class="launch-copy" type="button" id="copy-sub">Скопировать ссылку</button>
+          <p class="config-note">Используйте эту ссылку для автообновления в VPN-приложении</p>
+        </div>
       </section>
+
+      <section class="config-block" aria-label="Ключи серверов">
+        <h3>Ключи серверов</h3>
+
+        <article class="server-card">
+          <header class="server-head">
+            <span class="server-name"><span class="flag">🇩🇪</span> DE</span>
+            <span class="server-dot" aria-hidden="true"></span>
+          </header>
+          <pre class="server-key" id="de-key">Ключ появится после повторного /start.</pre>
+          <button class="key-copy" type="button" id="copy-key">Скопировать ключ</button>
+        </article>
+
+        <article class="server-card is-soon">
+          <div class="soon-blur" aria-hidden="true">
+            <header class="server-head">
+              <span class="server-name"><span class="flag">🇸🇬</span> SG</span>
+            </header>
+            <pre class="server-key">vless://soon</pre>
+          </div>
+          <div class="soon-cover">
+            <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M22.7 19.1 13.6 10a5.2 5.2 0 0 0-6.9-6.9L9.2 5.6 7.4 7.4 4.9 4.9a5.2 5.2 0 0 0 6.9 6.9l9.1 9.1c.4.4 1 .4 1.4 0l.4-.4c.4-.4.4-1 0-1.4z"
+              />
+            </svg>
+            <p>Появится позже</p>
+          </div>
+        </article>
+
+        <article class="server-card is-soon">
+          <div class="soon-blur" aria-hidden="true">
+            <header class="server-head">
+              <span class="server-name"><span class="flag">🇬🇧</span> UK</span>
+            </header>
+            <pre class="server-key">vless://soon</pre>
+          </div>
+          <div class="soon-cover">
+            <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M22.7 19.1 13.6 10a5.2 5.2 0 0 0-6.9-6.9L9.2 5.6 7.4 7.4 4.9 4.9a5.2 5.2 0 0 0 6.9 6.9l9.1 9.1c.4.4 1 .4 1.4 0l.4-.4c.4-.4.4-1 0-1.4z"
+              />
+            </svg>
+            <p>Появится позже</p>
+          </div>
+        </article>
+      </section>
+
+      <a class="pay-btn config-back" href="./index.html">Назад</a>
     </main>
     <script src="./app.js"></script>
   </body>

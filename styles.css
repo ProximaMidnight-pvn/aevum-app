@@ -522,6 +522,141 @@ button {
   margin-top: 8px;
 }
 
+.config-title {
+  margin: 4px 0 18px;
+  text-align: center;
+  font-family: Outfit, system-ui, sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #d6e56a;
+}
+
+.config-block {
+  margin-bottom: 22px;
+}
+
+.config-block h3 {
+  margin-bottom: 10px;
+  font-family: Outfit, system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.config-card,
+.server-card {
+  border-radius: 18px;
+  border: 1px solid var(--glass-border);
+  background: rgba(8, 14, 28, 0.62);
+  padding: 14px;
+}
+
+.config-value,
+.server-key {
+  margin: 0 0 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.35);
+  color: rgba(243, 238, 230, 0.82);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.config-note {
+  margin: 12px 0 0;
+  text-align: center;
+  color: rgba(243, 238, 230, 0.46);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.server-card + .server-card {
+  margin-top: 12px;
+}
+
+.server-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.server-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.flag {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.server-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3dce67;
+  box-shadow: 0 0 8px rgba(61, 206, 103, 0.8);
+}
+
+.key-copy {
+  display: block;
+  width: 100%;
+  border-radius: 14px;
+  padding: 12px 16px;
+  border: 1px solid rgba(243, 238, 230, 0.16);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.server-card.is-soon {
+  position: relative;
+  min-height: 148px;
+  overflow: hidden;
+}
+
+.soon-blur {
+  filter: blur(5px);
+  opacity: 0.55;
+  pointer-events: none;
+  user-select: none;
+}
+
+.soon-cover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #f3eee6;
+  text-align: center;
+}
+
+.soon-cover svg {
+  color: #d6e56a;
+}
+
+.soon-cover p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.config-back {
+  margin-top: 8px;
+}
+
 .fade-line {
   height: 1px;
   margin: 18px 4px 16px;

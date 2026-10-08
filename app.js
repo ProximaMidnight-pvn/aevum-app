@@ -327,26 +327,18 @@ function renderConfig() {
   const page = document.getElementById("config-page");
   if (!page) return;
   const params = new URLSearchParams(window.location.search);
-  const subscription = params.get("config") || "";
   const key = params.get("key") || "";
-  const subNode = document.getElementById("sub-url");
   const keyNode = document.getElementById("de-key");
-  const copySub = document.getElementById("copy-sub");
   const copyKey = document.getElementById("copy-key");
 
-  if (subNode && subscription) subNode.textContent = subscription;
   if (keyNode && key) keyNode.textContent = key;
-
-  const bindCopy = (button, value, done) => {
-    if (!button) return;
-    button.addEventListener("click", () => {
-      if (!value) return;
-      copyText(value);
-      button.textContent = done;
-    });
-  };
-  bindCopy(copySub, subscription, "Ссылка скопирована");
-  bindCopy(copyKey, key, "Ключ скопирован");
+  if (!copyKey) return;
+  copyKey.addEventListener("click", () => {
+    const value = keyNode?.textContent || "";
+    if (!value.startsWith("vless://")) return;
+    copyText(value);
+    copyKey.textContent = "Ключ скопирован";
+  });
 }
 
 function renderLocations() {

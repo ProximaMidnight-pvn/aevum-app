@@ -86,6 +86,18 @@ function isOwner() {
   return String(user.username || "").toLowerCase() === OWNER_NAME;
 }
 
+function renderPlanUntil() {
+  const node = document.getElementById("plan-until");
+  if (!node) return;
+  const until = new URLSearchParams(window.location.search).get("until") || "";
+  if (isOwner() || !/^\d{2}\.\d{2}\.\d{4}$/.test(until)) {
+    node.hidden = true;
+    return;
+  }
+  node.textContent = "До " + until;
+  node.hidden = false;
+}
+
 function renderOwnerPlan() {
   const button = document.getElementById("pay-btn");
   if (!button || !isOwner()) return;
@@ -383,6 +395,7 @@ renderLocations();
 renderDownloads();
 renderLaunch();
 renderOwnerPlan();
+renderPlanUntil();
 renderConfig();
 preserveAppLinks();
 document.getElementById("pay-btn")?.addEventListener("click", () => {

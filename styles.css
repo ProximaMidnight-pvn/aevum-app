@@ -422,6 +422,18 @@ button {
   font-weight: 400;
 }
 
+.plan-until {
+  color: rgba(243, 238, 230, 0.86);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.plan-until[hidden] {
+  display: none;
+}
+
 .plan-active {
   display: inline-flex;
   align-items: center;

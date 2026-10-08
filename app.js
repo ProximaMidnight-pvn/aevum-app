@@ -2,6 +2,8 @@ const LOCATIONS = [
   { code: "DE", flag: "🇩🇪" },
   { code: "SG", flag: "🇸🇬" },
   { code: "UK", flag: "🇬🇧" },
+  { code: "KZ", flag: "🇰🇿" },
+  { code: "RU", flag: "🇷🇺" },
 ];
 
 const PAYMENT_URL = "";
@@ -332,6 +334,10 @@ function renderConfig() {
   const copyKey = document.getElementById("copy-key");
 
   if (keyNode && key) keyNode.textContent = key;
+  const fold = document.getElementById("de-fold");
+  fold?.addEventListener("click", () => {
+    fold.classList.toggle("is-open");
+  });
   if (!copyKey) return;
   copyKey.addEventListener("click", () => {
     const value = keyNode?.textContent || "";
@@ -347,8 +353,7 @@ function renderLocations() {
   root.innerHTML = "";
   LOCATIONS.forEach((place, index) => {
     const chip = document.createElement("span");
-    const wave = ["de", "sg", "uk"][index] || "uk";
-    chip.className = `chip pulse-${wave}`;
+    chip.className = `chip pulse-${place.code.toLowerCase()}`;
     chip.innerHTML = `<b>${place.code}</b> <span class="flag">${place.flag}</span>`;
     root.appendChild(chip);
   });

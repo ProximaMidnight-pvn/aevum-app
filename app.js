@@ -381,6 +381,7 @@ function notifyBot(action) {
 
 function toast(text) {
   const node = document.getElementById("toast");
+  if (!node) return;
   node.textContent = text;
   node.hidden = false;
   clearTimeout(toast.timer);
@@ -433,6 +434,85 @@ document.querySelectorAll("[data-invoice]").forEach((button) => {
 document.querySelectorAll("[data-toast]").forEach((button) => {
   button.addEventListener("click", () => toast(button.dataset.toast));
 });
+
+function queryValue(name) {
+  return new URLSearchParams(window.location.search).get(name) || "";
+}
+
+function referralLink() {
+  const fromQuery = queryValue("uid");
+  const fromApp = telegramApp()?.initDataUnsafe?.user?.id;
+  const id = /^\d+$/.test(fromQuery) ? fromQuery : fromApp ? String(fromApp) : "";
+  return id ? "https://t.me/theaevum_bot?start=ref" + id : "";
+}
+
+function renderPartner() {
+  const badge = document.getElementById("token-badge");
+  const linkNode = document.getElementById("ref-link");
+  const list = document.getElementById("ref-list");
+  const toggle = document.getElementById("ref-toggle");
+  if (!badge || !linkNode || !list || !toggle) return;
+  const tokens = queryValue("tokens");
+  const count = document.getElementById("token-count");
+  if (count) count.textContent = /^\d+$/.test(tokens) ? tokens : "0";
+  const link = referralLink();
+  linkNode.textContent = link || "Ссылка появится после входа через бота.";
+  const refs = queryValue("refs")
+    .split(",")
+    .map((name) => name.trim())
+    .filter(Boolean);
+  toggle.addEventListener("click", () => {
+    const open = list.hidden;
+    list.hidden = !open;
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    if (!open) return;
+    list.replaceChildren();
+    if (!refs.length) {
+      const empty = document.createElement("p");
+      empty.textContent = "Пока никого нет.";
+      list.append(empty);
+      return;
+    }
+    const items = document.createElement("ul");
+    refs.forEach((name) => {
+      const item = document.createElement("li");
+      item.textContent = name;
+      items.append(item);
+    });
+    list.append(items);
+  });
+  document.getElementById("ref-copy")?.addEventListener("click", async () => {
+    if (!link) {
+      toast("Ссылка появится после входа через бота.");
+      return;
+    }
+    toast((await copyText(link)) ? "Ссылка скопирована." : "Не удалось скопировать.");
+  });
+  document.getElementById("ref-share")?.addEventListener("click", () => {
+    if (!link) {
+      toast("Ссылка появится после входа через бота.");
+      return;
+    }
+    const text = "Присоединяйся ко мне в Aevum VPN - " + link;
+    const share = "https://t.me/share/url?text=" + encodeURIComponent(text);
+    const app = telegramApp();
+    if (app?.openTelegramLink) app.openTelegramLink(share);
+    else window.location.href = share;
+  });
+}
+
+document.querySelectorAll("[data-token]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const code = button.dataset.token || "";
+    if (code !== "tokenbasic" && code !== "tokenpro") return;
+    const url = "https://t.me/theaevum_bot?start=" + code;
+    const app = telegramApp();
+    if (app?.openTelegramLink) app.openTelegramLink(url);
+    else window.location.href = url;
+  });
+});
+
+renderPartner();
 
 const tg = telegramApp();
 if (tg) {

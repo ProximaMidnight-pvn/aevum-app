@@ -1238,6 +1238,13 @@ button {
   line-height: 1;
 }
 
+.pay-mark {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  display: block;
+}
+
 .pay-page .plan-card {
   margin: 0;
   padding: 0;
@@ -1269,6 +1276,119 @@ button {
   height: 22px;
   flex: 0 0 22px;
   display: block;
+}
+
+.partner-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.partner-top .legal-back {
+  margin-bottom: 0;
+}
+
+.token-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.partner-note {
+  margin: 14px auto 0;
+  max-width: 28em;
+  color: var(--mute);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.ref-box {
+  margin-top: 22px;
+}
+
+.ref-toggle {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  background: var(--glass);
+  color: rgba(243, 238, 230, 0.92);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 400;
+  text-align: center;
+  backdrop-filter: blur(18px) saturate(1.1);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+}
+
+.ref-list {
+  margin-top: 10px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: var(--mute);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.ref-list ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.ref-list p {
+  margin: 0;
+  text-align: center;
+}
+
+.ref-link {
+  margin: 16px 0 0;
+  color: rgba(243, 238, 230, 0.82);
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: center;
+  word-break: break-all;
+}
+
+.ref-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.partner-page .pay-btn {
+  background: var(--glass);
+  color: rgba(243, 238, 230, 0.92);
+  font-weight: 400;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(18px) saturate(1.1);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+}
+
+.partner-page .pay-btn:active {
+  background: rgba(243, 238, 230, 0.08);
+}
+
+.pay-status {
+  margin: 12px auto 0;
+  max-width: 28em;
+  color: var(--mute);
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
 }
 
 .legal-date {

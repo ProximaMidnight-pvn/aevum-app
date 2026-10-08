@@ -403,6 +403,33 @@ document.getElementById("pay-btn")?.addEventListener("click", () => {
   window.location.href = "./pay.html" + (window.location.search || "");
 });
 
+document.querySelectorAll("[data-invoice]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const url = button.dataset.invoice || "";
+    const status = document.getElementById("pay-status");
+    const show = (text) => {
+      if (!status) return;
+      status.hidden = false;
+      status.textContent = text;
+    };
+    if (!url) {
+      show("Оплата временно недоступна.");
+      return;
+    }
+    const tg = telegramApp();
+    if (tg?.openInvoice) {
+      tg.openInvoice(url, (result) => {
+        if (result === "paid") show("Оплата прошла. Срок подписки обновлён.");
+        else if (result === "cancelled") show("Оплата отменена.");
+        else if (result === "pending") show("Оплата ещё обрабатывается.");
+        else show("Оплата не прошла. Попробуйте ещё раз.");
+      });
+      return;
+    }
+    window.location.href = url;
+  });
+});
+
 document.querySelectorAll("[data-toast]").forEach((button) => {
   button.addEventListener("click", () => toast(button.dataset.toast));
 });

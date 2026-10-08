@@ -1170,41 +1170,85 @@ button {
   margin: 8px 0 4px 1.15em;
 }
 
+.pay-page {
+  position: relative;
+  min-height: 100dvh;
+}
+
 .pay-title {
-  margin: 0 0 16px;
+  margin: 6px 0 0;
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.25;
   color: #d6e56a;
+  text-align: center;
 }
 
 .pay-note {
-  margin: 0 0 16px;
+  margin: 10px auto 0;
+  max-width: 28em;
   color: var(--mute);
   font-size: 14px;
+  font-weight: 400;
   line-height: 1.5;
+  text-align: center;
+}
+
+.pay-stage {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .pay-methods {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+}
+
+.pay-page .pay-methods .pay-btn,
+.pay-page .coin-list .tariff-price,
+.pay-page .tariffs .tariff-price {
+  background: var(--glass);
+  color: rgba(243, 238, 230, 0.92);
+  font-weight: 400;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(18px) saturate(1.1);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+}
+
+.pay-page .pay-methods .pay-btn:active,
+.pay-page .coin-list .tariff-price:active,
+.pay-page .tariffs .tariff-price:active {
+  background: rgba(243, 238, 230, 0.08);
 }
 
 .pay-methods .pay-btn {
   margin: 0;
 }
 
+.pay-page .plan-card {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 .coin-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .coin-list .tariff-price {
   width: 100%;
   padding: 14px 16px;
-  font-size: 16px;
+  border-radius: 999px;
+  font-size: 15px;
 }
 
 .legal-date {

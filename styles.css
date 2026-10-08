@@ -728,6 +728,64 @@ button {
   cursor: pointer;
 }
 
+.launch-card {
+  background: #101114;
+  border-radius: 22px;
+  padding: 18px 16px 14px;
+}
+
+.launch-copy {
+  display: block;
+  width: 100%;
+  border-radius: 999px;
+  padding: 16px 18px;
+  background: #d6e56a;
+  color: #111;
+  border: 3px solid #c5d4ff;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.launch-steps {
+  list-style: none;
+  margin-top: 6px;
+}
+
+.launch-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.launch-steps span {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: #d6e56a;
+  color: #111;
+  font-size: 14px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.launch-steps p {
+  margin: 0;
+  color: rgba(232, 232, 232, 0.78);
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.launch-steps b {
+  color: #f4f4f4;
+  font-weight: 700;
+}
+
 .toast {
   position: fixed;
   left: 50%;

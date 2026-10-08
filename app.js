@@ -95,6 +95,72 @@ function currentPlatform() {
   return "";
 }
 
+function configLink() {
+  return new URLSearchParams(window.location.search).get("config") || "";
+}
+
+function copyText(text) {
+  const area = document.createElement("textarea");
+  area.value = text;
+  area.setAttribute("readonly", "");
+  area.style.position = "fixed";
+  area.style.top = "0";
+  area.style.left = "0";
+  area.style.opacity = "0";
+  document.body.appendChild(area);
+  area.focus();
+  area.select();
+  area.setSelectionRange(0, area.value.length);
+  let ok = false;
+  try {
+    ok = document.execCommand("copy");
+  } catch {
+    ok = false;
+  }
+  area.remove();
+  if (ok) return Promise.resolve(true);
+  if (!navigator.clipboard?.writeText) return Promise.resolve(false);
+  return navigator.clipboard.writeText(text).then(
+    () => true,
+    () => false
+  );
+}
+
+function renderLaunch() {
+  const sheet = document.getElementById("launch-sheet");
+  const openButton = document.getElementById("launch-btn");
+  const copyButton = document.getElementById("launch-copy");
+  if (!sheet || !openButton || !copyButton) return;
+
+  const close = () => {
+    sheet.hidden = true;
+    if (document.getElementById("download-sheet")?.hidden !== false) {
+      document.body.style.overflow = "";
+    }
+  };
+
+  openButton.addEventListener("click", () => {
+    copyButton.textContent = "Скопировать ссылку";
+    sheet.hidden = false;
+    document.body.style.overflow = "hidden";
+  });
+
+  copyButton.addEventListener("click", () => {
+    const link = configLink();
+    if (!link) return;
+    copyText(link);
+    copyButton.textContent = "Ссылка скопирована";
+  });
+
+  document.getElementById("launch-close")?.addEventListener("click", close);
+  sheet.addEventListener("click", (event) => {
+    if (event.target === sheet) close();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !sheet.hidden) close();
+  });
+}
+
 function renderDownloads() {
   const sheet = document.getElementById("download-sheet");
   const osView = document.getElementById("download-os");
@@ -255,6 +321,7 @@ renderSky();
 renderRipple();
 renderLocations();
 renderDownloads();
+renderLaunch();
 document.getElementById("pay-btn")?.addEventListener("click", openPayment);
 
 document.querySelectorAll("[data-toast]").forEach((button) => {

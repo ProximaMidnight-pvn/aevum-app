@@ -93,12 +93,12 @@
             />
           </svg>
         </button>
-        <a class="connect-btn connect-secondary" href="./start.html">
+        <button class="connect-btn connect-secondary" type="button" id="launch-btn">
           <span>2. Запустить VPN</span>
           <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
             <path d="M9 7.2v9.6L18 12 9 7.2Z" fill="currentColor" />
           </svg>
-        </a>
+        </button>
       </section>
 
       <div class="fade-line" aria-hidden="true"></div>
@@ -189,6 +189,27 @@
           <div class="app-list" id="app-list"></div>
         </div>
         <button class="download-close" type="button" id="download-close">Закрыть</button>
+      </div>
+    </div>
+
+    <div class="sheet download-sheet" id="launch-sheet" hidden>
+      <div class="sheet-card launch-card" role="dialog" aria-modal="true" aria-labelledby="launch-copy">
+        <button class="launch-copy" type="button" id="launch-copy">Скопировать ссылку</button>
+        <ol class="launch-steps">
+          <li>
+            <span>1</span>
+            <p>Нажмите <b>«Скопировать ссылку»</b></p>
+          </li>
+          <li>
+            <span>2</span>
+            <p>Откройте приложение <b>Shadowrocket</b><br />или <b>Happ</b></p>
+          </li>
+          <li>
+            <span>3</span>
+            <p>Нажмите + → <b>Импорт из буфера</b></p>
+          </li>
+        </ol>
+        <button class="download-close" type="button" id="launch-close">Закрыть</button>
       </div>
     </div>
 

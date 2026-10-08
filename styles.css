@@ -456,11 +456,14 @@ button {
   justify-content: space-between;
   gap: 12px;
   width: 100%;
+  border: none;
   border-radius: 999px;
   padding: 16px 20px;
+  font: inherit;
   font-size: 15px;
   font-weight: 500;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .connect-btn + .connect-btn {
@@ -590,6 +593,128 @@ button {
   color: var(--mute);
   line-height: 1.55;
   margin-bottom: 16px;
+}
+
+.download-sheet {
+  place-items: center;
+  padding: 24px 16px;
+  background: rgba(4, 6, 12, 0.66);
+  z-index: 8;
+}
+
+.download-card {
+  background: #14181f;
+  border: 1px solid rgba(243, 238, 230, 0.08);
+  border-radius: 22px;
+  padding: 22px 16px 14px;
+}
+
+.download-card h3 {
+  font-family: Outfit, system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.download-card p {
+  margin-bottom: 16px;
+  color: rgba(243, 238, 230, 0.46);
+  font-size: 15px;
+}
+
+.os-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 58px;
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(243, 238, 230, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.os-row svg {
+  flex: 0 0 auto;
+  color: rgba(243, 238, 230, 0.72);
+}
+
+.os-row.is-current {
+  border-color: #d7e3a4;
+  background: rgba(92, 104, 58, 0.42);
+}
+
+.os-row.is-current svg {
+  color: #d7e3a4;
+}
+
+.os-badge,
+.os-chevron {
+  margin-left: auto;
+}
+
+.os-badge {
+  color: #d7e3a4;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  font-weight: 500;
+}
+
+.os-chevron {
+  color: rgba(243, 238, 230, 0.38);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.app-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 52px;
+  margin-top: 10px;
+  border-radius: 16px;
+  background: var(--btn);
+  color: #161410;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.app-link:active {
+  background: var(--btn-press);
+}
+
+.download-back {
+  margin: 0 0 12px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: rgba(243, 238, 230, 0.62);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.download-close {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(243, 238, 230, 0.14);
+  background: transparent;
+  color: rgba(243, 238, 230, 0.72);
+  font: inherit;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 .toast {

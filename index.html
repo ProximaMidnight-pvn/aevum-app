@@ -80,7 +80,7 @@
 
       <section class="connect" aria-label="Способ подключения">
         <h2 class="connect-title">Способ подключения:</h2>
-        <a class="connect-btn connect-primary" href="./download.html">
+        <button class="connect-btn connect-primary" type="button" id="download-btn">
           <span>1. Скачать приложение</span>
           <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
             <path
@@ -92,7 +92,7 @@
               stroke-linejoin="round"
             />
           </svg>
-        </a>
+        </button>
         <a class="connect-btn connect-secondary" href="./start.html">
           <span>2. Запустить VPN</span>
           <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
@@ -169,6 +169,29 @@
         SAFETY
       </p>
     </main>
+
+    <div class="sheet download-sheet" id="download-sheet" hidden>
+      <div
+        class="sheet-card download-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="download-title"
+      >
+        <div id="download-os">
+          <h3 id="download-title">Скачать приложение</h3>
+          <p>Выберите вашу платформу</p>
+          <div class="os-list" id="os-list"></div>
+        </div>
+        <div id="download-apps" hidden>
+          <button class="download-back" type="button" id="download-back">Назад</button>
+          <h3 id="download-os-title">Приложение</h3>
+          <p>Выберите приложение</p>
+          <div class="app-list" id="app-list"></div>
+        </div>
+        <button class="download-close" type="button" id="download-close">Закрыть</button>
+      </div>
+    </div>
+
     <p class="toast" id="toast" hidden></p>
     <script src="./app.js"></script>
   </body>

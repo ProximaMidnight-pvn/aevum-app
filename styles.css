@@ -778,6 +778,27 @@ button {
   filter: invert(92%) sepia(8%) saturate(280%) hue-rotate(8deg) brightness(97%);
 }
 
+.credit {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.credit span {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(8, 14, 28, 0.38);
+  border: 1px solid rgba(243, 238, 230, 0.14);
+}
+
+.credit img {
+  display: block;
+  height: 16px;
+  width: auto;
+}
+
 .sheet {
   position: fixed;
   inset: 0;

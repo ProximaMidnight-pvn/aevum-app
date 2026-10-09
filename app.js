@@ -331,9 +331,8 @@ function preserveAppLinks() {
   if (!search) return;
   document.querySelectorAll("a[href]").forEach((link) => {
     const href = link.getAttribute("href") || "";
-    if (href.startsWith("./") && href.includes(".html") && !href.includes("?")) {
-      link.setAttribute("href", href + search);
-    }
+    if (!href.startsWith("./") || !href.includes(".html")) return;
+    link.setAttribute("href", href.split("?")[0] + search);
   });
 }
 
@@ -345,12 +344,18 @@ function renderConfig() {
   const keyNode = document.getElementById("de-key");
   const copyKey = document.getElementById("copy-key");
 
-  if (keyNode && key) keyNode.textContent = key;
+  if (keyNode) {
+    keyNode.textContent = key || "Ключ появится после повторного /start.";
+  }
   const fold = document.getElementById("de-fold");
-  fold?.addEventListener("click", () => {
-    fold.classList.toggle("is-open");
-  });
-  if (!copyKey) return;
+  if (fold && !fold.dataset.bound) {
+    fold.dataset.bound = "1";
+    fold.addEventListener("click", () => {
+      fold.classList.toggle("is-open");
+    });
+  }
+  if (!copyKey || copyKey.dataset.bound) return;
+  copyKey.dataset.bound = "1";
   copyKey.addEventListener("click", () => {
     const value = keyNode?.textContent || "";
     if (!value.startsWith("vless://")) return;
@@ -390,19 +395,132 @@ function toast(text) {
   }, 2200);
 }
 
-renderSky();
-renderRipple();
-renderLocations();
-renderDownloads();
-renderLaunch();
-renderOwnerPlan();
-renderPlanUntil();
-renderConfig();
-preserveAppLinks();
-document.getElementById("pay-btn")?.addEventListener("click", () => {
-  if (isOwner()) return;
-  window.location.href = "./pay.html" + (window.location.search || "");
-});
+const PROFILE_FIELDS = ["config", "key", "until", "uid", "tokens", "refs"];
+const PROFILE_STORE = "aevum-profile";
+
+function profileFromParams(params) {
+  const data = {};
+  PROFILE_FIELDS.forEach((name) => {
+    const value = params.get(name) || "";
+    if (value) data[name] = value;
+  });
+  if (!String(data.key || "").startsWith("vless://")) return null;
+  return data;
+}
+
+function currentTelegramId() {
+  const id = telegramApp()?.initDataUnsafe?.user?.id;
+  return id ? String(id) : "";
+}
+
+function profileMatchesUser(data) {
+  const id = currentTelegramId();
+  if (!id || !data?.uid) return !id;
+  return String(data.uid) === id;
+}
+
+function readStoredProfile(raw) {
+  try {
+    const data = JSON.parse(raw || "");
+    if (!data || !String(data.key || "").startsWith("vless://")) return null;
+    if (!profileMatchesUser(data)) return null;
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function applyProfile(data) {
+  const params = new URLSearchParams(window.location.search);
+  PROFILE_FIELDS.forEach((name) => {
+    if (data[name]) params.set(name, data[name]);
+  });
+  const search = params.toString();
+  const next = window.location.pathname + "?" + search + window.location.hash;
+  if (window.location.pathname + window.location.search + window.location.hash !== next) {
+    history.replaceState(null, "", next);
+  }
+}
+
+function writeBrowserProfile(data) {
+  try {
+    localStorage.setItem(PROFILE_STORE, JSON.stringify(data));
+  } catch {
+    /* private mode can block storage */
+  }
+}
+
+function storageSet(storage, data) {
+  if (!storage?.setItem) return;
+  try {
+    storage.setItem(PROFILE_STORE, JSON.stringify(data), () => {});
+  } catch {
+    /* this Telegram client has no cloud storage */
+  }
+}
+
+function rememberProfile(params) {
+  const data = profileFromParams(params);
+  if (!data) return;
+  if (!data.uid && currentTelegramId()) data.uid = currentTelegramId();
+  writeBrowserProfile(data);
+  const app = telegramApp();
+  storageSet(app?.DeviceStorage, data);
+  storageSet(app?.CloudStorage, data);
+}
+
+function storageGet(storage) {
+  return new Promise((resolve) => {
+    if (!storage?.getItem) {
+      resolve(null);
+      return;
+    }
+    let settled = false;
+    const finish = (value) => {
+      if (settled) return;
+      settled = true;
+      resolve(value);
+    };
+    let timer = 0;
+    try {
+      timer = window.setTimeout(() => finish(null), 1500);
+      storage.getItem(PROFILE_STORE, (error, value) => {
+        window.clearTimeout(timer);
+        const data = error ? null : readStoredProfile(value);
+        if (settled) {
+          if (!data || new URLSearchParams(window.location.search).get("key")) return;
+          applyProfile(data);
+          writeBrowserProfile(data);
+          renderPlanUntil();
+          renderConfig();
+          preserveAppLinks();
+          renderPartner();
+          return;
+        }
+        finish(data);
+      });
+    } catch {
+      window.clearTimeout(timer);
+      finish(null);
+    }
+  });
+}
+
+function startApp() {
+  renderSky();
+  renderRipple();
+  renderLocations();
+  renderDownloads();
+  renderLaunch();
+  renderOwnerPlan();
+  renderPlanUntil();
+  renderConfig();
+  preserveAppLinks();
+  document.getElementById("pay-btn")?.addEventListener("click", () => {
+    if (isOwner()) return;
+    window.location.href = "./pay.html" + (window.location.search || "");
+  });
+}
 
 document.querySelectorAll("[data-invoice]").forEach((button) => {
   button.addEventListener("click", () => {
@@ -457,16 +575,18 @@ function renderPartner() {
   if (count) count.textContent = /^\d+$/.test(tokens) ? tokens : "0";
   const link = referralLink();
   linkNode.textContent = link || "Ссылка появится после входа через бота.";
-  const refs = queryValue("refs")
-    .split(",")
-    .map((name) => name.trim())
-    .filter(Boolean);
+  if (toggle.dataset.bound) return;
+  toggle.dataset.bound = "1";
   toggle.addEventListener("click", () => {
     const open = list.hidden;
     list.hidden = !open;
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
     if (!open) return;
     list.replaceChildren();
+    const refs = queryValue("refs")
+      .split(",")
+      .map((name) => name.trim())
+      .filter(Boolean);
     if (!refs.length) {
       const empty = document.createElement("p");
       empty.textContent = "Пока никого нет.";
@@ -482,18 +602,20 @@ function renderPartner() {
     list.append(items);
   });
   document.getElementById("ref-copy")?.addEventListener("click", async () => {
-    if (!link) {
+    const current = referralLink();
+    if (!current) {
       toast("Ссылка появится после входа через бота.");
       return;
     }
-    toast((await copyText(link)) ? "Ссылка скопирована." : "Не удалось скопировать.");
+    toast((await copyText(current)) ? "Ссылка скопирована." : "Не удалось скопировать.");
   });
   document.getElementById("ref-share")?.addEventListener("click", () => {
-    if (!link) {
+    const current = referralLink();
+    if (!current) {
       toast("Ссылка появится после входа через бота.");
       return;
     }
-    const text = "Присоединяйся ко мне в Aevum VPN - " + link;
+    const text = "Присоединяйся ко мне в Aevum VPN - " + current;
     const share = "https://t.me/share/url?text=" + encodeURIComponent(text);
     const app = telegramApp();
     if (app?.openTelegramLink) app.openTelegramLink(share);
@@ -512,12 +634,36 @@ document.querySelectorAll("[data-token]").forEach((button) => {
   });
 });
 
-renderPartner();
-
-const tg = telegramApp();
-if (tg) {
-  tg.ready();
-  tg.expand();
-  tg.setHeaderColor("#070b16");
-  tg.setBackgroundColor("#070b16");
+async function boot() {
+  const tg = telegramApp();
+  if (tg) {
+    tg.ready();
+    tg.expand();
+    tg.setHeaderColor("#070b16");
+    tg.setBackgroundColor("#070b16");
+  }
+  const current = new URLSearchParams(window.location.search);
+  if (current.get("key")) rememberProfile(current);
+  else {
+    const local = readStoredProfile(localStorage.getItem(PROFILE_STORE));
+    if (local) applyProfile(local);
+  }
+  startApp();
+  renderPartner();
+  if (current.get("key")) return;
+  const app = telegramApp();
+  const stored = await Promise.all([
+    storageGet(app?.DeviceStorage),
+    storageGet(app?.CloudStorage),
+  ]);
+  const saved = stored[1] || stored[0];
+  if (!saved) return;
+  applyProfile(saved);
+  writeBrowserProfile(saved);
+  renderPlanUntil();
+  renderConfig();
+  preserveAppLinks();
+  renderPartner();
 }
+
+boot();

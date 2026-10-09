@@ -520,6 +520,123 @@ function startApp() {
     if (isOwner()) return;
     window.location.href = "./pay.html" + (window.location.search || "");
   });
+  bindOfferPicks();
+  renderPayMethod();
+}
+
+const OFFERS = {
+  "1": {
+    title: "1 месяц",
+    days: "30 дней",
+    rub: "99 ₽",
+    stars: "66 звёзд",
+    tokens: "2 токена",
+    invoice: "https://t.me/$h-bZHqw1QEqqGAAAso-qMPBwDic",
+    token: "token1",
+  },
+  "3": {
+    title: "3 месяца",
+    days: "90 дней",
+    rub: "269 ₽",
+    stars: "178 звёзд",
+    tokens: "6 токенов",
+    invoice: "https://t.me/$UTMt-6w1QEqrGAAAZ9yN_uqYEj0",
+    token: "token3",
+  },
+  "12": {
+    title: "12 месяцев",
+    days: "365 дней",
+    rub: "999 ₽",
+    stars: "713 звёзд",
+    tokens: "24 токена",
+    invoice: "https://t.me/$VJLS-qw1QEqsGAAAuQIgOys2JOk",
+    token: "token12",
+  },
+};
+
+function showPayStatus(text) {
+  const status = document.getElementById("pay-status");
+  if (!status) return;
+  status.hidden = !text;
+  status.textContent = text || "";
+}
+
+function openStarInvoice(url) {
+  if (!url) {
+    showPayStatus("Оплата временно недоступна.");
+    return;
+  }
+  const tg = telegramApp();
+  if (tg?.openInvoice) {
+    tg.openInvoice(url, (result) => {
+      if (result === "paid") showPayStatus("Оплата прошла. Срок подписки обновлён.");
+      else if (result === "cancelled") showPayStatus("Оплата отменена.");
+      else if (result === "pending") showPayStatus("Оплата ещё обрабатывается.");
+      else showPayStatus("Оплата не прошла. Попробуйте ещё раз.");
+    });
+    return;
+  }
+  window.location.href = url;
+}
+
+function openTokenSpend(code) {
+  const allowed = ["token1", "token3", "token12", "tokenbasic", "tokenpro"];
+  if (!allowed.includes(code)) return;
+  const url = "https://t.me/theaevum_bot?start=" + code;
+  const app = telegramApp();
+  if (app?.openTelegramLink) app.openTelegramLink(url);
+  else window.location.href = url;
+}
+
+function bindOfferPicks() {
+  document.querySelectorAll(".offer-pick").forEach((link) => {
+    if (link.dataset.bound) return;
+    link.dataset.bound = "1";
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      const params = new URLSearchParams(window.location.search);
+      params.set("plan", link.dataset.plan || "");
+      window.location.href = "./pay-method.html?" + params.toString();
+    });
+  });
+}
+
+function renderPayMethod() {
+  const page = document.getElementById("pay-method");
+  if (!page || page.dataset.bound) return;
+  page.dataset.bound = "1";
+  const offer = OFFERS[queryValue("plan")];
+  if (!offer) {
+    const params = new URLSearchParams(window.location.search);
+    params.delete("plan");
+    const rest = params.toString();
+    window.location.replace("./pay.html" + (rest ? "?" + rest : ""));
+    return;
+  }
+  const title = document.getElementById("sum-title");
+  const days = document.getElementById("sum-days");
+  const rub = document.getElementById("sum-rub");
+  const sbp = document.getElementById("sbp-price");
+  const stars = document.getElementById("star-price");
+  const tokens = document.getElementById("token-price");
+  if (title) title.textContent = offer.title;
+  if (days) days.textContent = offer.days;
+  if (rub) rub.textContent = offer.rub;
+  if (sbp) sbp.textContent = offer.rub;
+  if (stars) stars.textContent = offer.stars;
+  if (tokens) tokens.textContent = offer.tokens;
+  document.getElementById("pay-sbp")?.addEventListener("click", () => {
+    showPayStatus("Оплата через СБП появится позже. Сумма: " + offer.rub + ".");
+  });
+  document.getElementById("pay-stars")?.addEventListener("click", () => {
+    openStarInvoice(offer.invoice);
+  });
+  document.getElementById("pay-crypto")?.addEventListener("click", () => {
+    showPayStatus("Цены в криптовалюте появятся позже.");
+  });
+  document.getElementById("pay-token")?.addEventListener("click", () => {
+    openTokenSpend(offer.token);
+  });
 }
 
 document.querySelectorAll("[data-invoice]").forEach((button) => {
@@ -615,11 +732,7 @@ function renderPartner() {
 document.querySelectorAll("[data-token]").forEach((button) => {
   button.addEventListener("click", () => {
     const code = button.dataset.token || "";
-    if (code !== "tokenbasic" && code !== "tokenpro") return;
-    const url = "https://t.me/theaevum_bot?start=" + code;
-    const app = telegramApp();
-    if (app?.openTelegramLink) app.openTelegramLink(url);
-    else window.location.href = url;
+    openTokenSpend(code);
   });
 });
 

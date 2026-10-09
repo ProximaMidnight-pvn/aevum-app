@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=5" />
+    <link rel="stylesheet" href="./styles.css?v=6" />
   </head>
   <body>
     <main class="app pay-page pay-flow" id="pay-method">
@@ -57,8 +57,16 @@
         </button>
       </div>
       <p class="pay-status" id="pay-status" hidden></p>
+      <div class="crypto-modal" id="token-confirm" hidden>
+        <button class="crypto-backdrop" type="button" id="token-confirm-close" aria-label="Закрыть"></button>
+        <div class="crypto-card" role="dialog" aria-modal="true" aria-labelledby="token-confirm-title">
+          <h3 id="token-confirm-title">Подтвердить оплату</h3>
+          <p class="token-sum" id="token-sum">2 токена</p>
+          <button class="pay-btn" type="button" id="token-confirm-yes">Подтвердить оплату</button>
+        </div>
+      </div>
       <p class="toast" id="toast" hidden></p>
     </main>
-    <script src="./app.js?v=5"></script>
+    <script src="./app.js?v=6"></script>
   </body>
 </html>

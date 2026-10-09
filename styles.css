@@ -1661,6 +1661,14 @@ button {
   text-align: center;
 }
 
+.token-sum {
+  margin: 16px 0;
+  color: #d6e56a;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+}
+
 .crypto-toggle {
   margin-top: 18px;
 }

@@ -594,7 +594,7 @@ function bindOfferPicks() {
 }
 
 const TOKEN_COST = { "1": 2, "3": 6, "12": 24 };
-const TOKEN_API = "https://ea5fa4173be40c.lhr.life";
+const TOKEN_API = "https://745c325e06e5ec.lhr.life";
 let tokenSpendBusy = false;
 
 function tokenBalance() {
@@ -603,27 +603,65 @@ function tokenBalance() {
 }
 
 function tokenApi() {
+  if (/^https:\/\/.+/i.test(TOKEN_API)) return TOKEN_API.replace(/\/$/, "") + "/api/tokens";
   const fromQuery = queryValue("api");
   if (/^https:\/\/.+/i.test(fromQuery)) return fromQuery.replace(/\/$/, "") + "/api/tokens";
-  if (/^https:\/\/.+/i.test(TOKEN_API)) return TOKEN_API.replace(/\/$/, "") + "/api/tokens";
   return "";
+}
+
+function untilStamp(value) {
+  const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(value || "");
+  if (!match) return 0;
+  return Date.UTC(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
+}
+
+function fresherProfile(params) {
+  const stored = readStoredProfile(localStorage.getItem(PROFILE_STORE)) || {};
+  const data = {};
+  PROFILE_FIELDS.forEach((name) => {
+    const value = params.get(name) || stored[name] || "";
+    if (value) data[name] = value;
+  });
+  if (untilStamp(stored.until) > untilStamp(data.until || "")) {
+    data.until = stored.until;
+    if (stored.tokens) data.tokens = stored.tokens;
+  }
+  return data;
+}
+
+function syncPaidProfile() {
+  const merged = fresherProfile(new URLSearchParams(window.location.search));
+  if (!String(merged.key || "").startsWith("vless://")) return;
+  applyProfile(merged);
+  rememberProfile(new URLSearchParams(window.location.search));
+  renderPlanUntil();
+  const count = document.getElementById("token-count");
+  if (count && merged.tokens) count.textContent = merged.tokens;
+  preserveAppLinks();
 }
 
 function rememberPaidProfile(tokens, until) {
   const params = new URLSearchParams(window.location.search);
+  const stored = readStoredProfile(localStorage.getItem(PROFILE_STORE)) || {};
+  PROFILE_FIELDS.forEach((name) => {
+    if (!params.get(name) && stored[name]) params.set(name, stored[name]);
+  });
   if (tokens != null && tokens !== "") params.set("tokens", String(tokens));
   if (until) params.set("until", until);
-  history.replaceState(null, "", window.location.pathname + "?" + params.toString() + window.location.hash);
   const data = {};
   PROFILE_FIELDS.forEach((name) => {
     const value = params.get(name) || "";
     if (value) data[name] = value;
   });
-  if (!String(data.key || "").startsWith("vless://")) return;
-  writeBrowserProfile(data);
-  const app = telegramApp();
-  storageSet(app?.DeviceStorage, data);
-  storageSet(app?.CloudStorage, data);
+  if (String(data.key || "").startsWith("vless://")) {
+    writeBrowserProfile(data);
+    const app = telegramApp();
+    storageSet(app?.DeviceStorage, data);
+    storageSet(app?.CloudStorage, data);
+  }
+  applyProfile(data);
+  renderPlanUntil();
+  preserveAppLinks();
 }
 
 async function spendTokens(plan) {
@@ -658,6 +696,8 @@ async function spendTokens(plan) {
       return;
     }
     rememberPaidProfile(data.tokens, data.until || "");
+    const confirm = document.getElementById("token-confirm");
+    if (confirm) confirm.hidden = true;
     toast(data.until ? "Подписка продлена до " + data.until : "Подписка продлена");
   } catch {
     toast("Не удалось списать токены. Попробуйте ещё раз.");
@@ -738,7 +778,7 @@ function renderCrypto() {
       if (modal) modal.hidden = false;
     });
   });
-  fetch("./crypto.json?v=5")
+  fetch("./crypto.json?v=6")
     .then((response) => (response.ok ? response.json() : null))
     .then((data) => {
       if (!data || typeof data !== "object") return;
@@ -787,6 +827,23 @@ function renderPayMethod() {
     window.location.href = "./pay-crypto.html?" + params.toString();
   });
   document.getElementById("pay-token")?.addEventListener("click", () => {
+    const modal = document.getElementById("token-confirm");
+    const sum = document.getElementById("token-sum");
+    if (sum) sum.textContent = offer.tokens;
+    if (!modal) {
+      spendTokens(queryValue("plan"));
+      return;
+    }
+    modal.hidden = false;
+  });
+  const closeConfirm = () => {
+    const modal = document.getElementById("token-confirm");
+    if (modal) modal.hidden = true;
+  };
+  document.getElementById("token-confirm-close")?.addEventListener("click", closeConfirm);
+  document.getElementById("token-confirm-yes")?.addEventListener("click", () => {
+    const modal = document.getElementById("token-confirm");
+    if (modal) modal.hidden = true;
     spendTokens(queryValue("plan"));
   });
 }
@@ -902,8 +959,8 @@ async function boot() {
     tg.setBackgroundColor("#070b16");
   }
   const current = new URLSearchParams(window.location.search);
-  if (current.get("key")) rememberProfile(current);
-  else {
+  syncPaidProfile();
+  if (!current.get("key")) {
     const local = readStoredProfile(localStorage.getItem(PROFILE_STORE));
     if (local) applyProfile(local);
   }
@@ -926,3 +983,9 @@ async function boot() {
 }
 
 boot();
+
+window.addEventListener("pageshow", (event) => {
+  if (!event.persisted) return;
+  syncPaidProfile();
+  renderPlanUntil();
+});

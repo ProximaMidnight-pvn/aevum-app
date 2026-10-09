@@ -575,6 +575,7 @@ function renderPartner() {
   if (count) count.textContent = /^\d+$/.test(tokens) ? tokens : "0";
   const link = referralLink();
   linkNode.textContent = link || "Ссылка появится после входа через бота.";
+  linkNode.classList.toggle("is-empty", !link);
   if (toggle.dataset.bound) return;
   toggle.dataset.bound = "1";
   toggle.addEventListener("click", () => {
@@ -607,19 +608,7 @@ function renderPartner() {
       toast("Ссылка появится после входа через бота.");
       return;
     }
-    toast((await copyText(current)) ? "Ссылка скопирована." : "Не удалось скопировать.");
-  });
-  document.getElementById("ref-share")?.addEventListener("click", () => {
-    const current = referralLink();
-    if (!current) {
-      toast("Ссылка появится после входа через бота.");
-      return;
-    }
-    const text = "Присоединяйся ко мне в Aevum VPN - " + current;
-    const share = "https://t.me/share/url?text=" + encodeURIComponent(text);
-    const app = telegramApp();
-    if (app?.openTelegramLink) app.openTelegramLink(share);
-    else window.location.href = share;
+    toast((await copyText(current)) ? "ссылка скопирована" : "Не удалось скопировать.");
   });
 }
 

@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
@@ -23,21 +23,27 @@
         <span class="token-badge" id="token-badge"><svg class="pay-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="17.6" r="12.6" fill="#C8880A"/><circle cx="16" cy="14.8" r="12.6" fill="#FFE14A"/><circle cx="16" cy="14.8" r="8.2" fill="none" stroke="#E8A317" stroke-width="1.8"/><path fill="#FFF6C2" d="M10 12.4a8.2 8.2 0 0 1 6.4-4.2 7 7 0 0 0-5.6 3.2 6 6 0 0 0-.8 1z"/></svg><span id="token-count">0</span></span>
       </div>
       <h2 class="pay-title">Партнёрка</h2>
-      <p class="partner-note">
-        1 токен за первую оплату приглашённого. 2 токена — месяц базовой подписки,
-        4 токена — месяц PRO.
-      </p>
+      <section class="invite-card" aria-label="Пригласительная ссылка">
+        <div class="invite-text">
+          <p class="invite-label">Моя пригласительная ссылка на бот</p>
+          <p class="invite-url" id="ref-link">Ссылка появится после входа через бота.</p>
+        </div>
+        <button class="invite-copy" type="button" id="ref-copy" aria-label="Скопировать ссылку">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="8" y="8" width="12" height="12" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.6" />
+            <rect x="4" y="4" width="12" height="12" rx="2.2" fill="#fff" stroke="currentColor" stroke-width="1.6" />
+          </svg>
+        </button>
+      </section>
       <section class="ref-box">
         <button class="ref-toggle" type="button" id="ref-toggle" aria-expanded="false">
           Мои рефералы
         </button>
         <div class="ref-list" id="ref-list" hidden></div>
-        <p class="ref-link" id="ref-link">Ссылка появится после входа через бота.</p>
       </section>
-      <div class="ref-actions">
-        <button class="pay-btn" type="button" id="ref-copy">Скопировать ссылку</button>
-        <button class="pay-btn" type="button" id="ref-share">Отправить ссылку</button>
-      </div>
+      <p class="partner-note">
+        1 токен начисляется единожды, после того как ваш реферал оплатит подписку
+      </p>
       <p class="toast" id="toast" hidden></p>
     </main>
     <script src="./app.js"></script>

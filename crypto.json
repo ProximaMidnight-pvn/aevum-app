@@ -1,0 +1,6 @@
+{
+  "usd": { "wallet": "", "qr": "" },
+  "eth": { "wallet": "", "qr": "" },
+  "btc": { "wallet": "", "qr": "" },
+  "sol": { "wallet": "", "qr": "" }
+}

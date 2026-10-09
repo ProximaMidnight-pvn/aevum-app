@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
     />
-    <title>Aevum — Криптовалюта</title>
+    <title>Криптовалюта</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,23 +14,25 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=3" />
+    <link rel="stylesheet" href="./styles.css?v=4" />
   </head>
   <body>
-    <main class="app pay-page">
-      <a class="legal-back" href="./pay.html">Назад</a>
+    <main class="app pay-page pay-flow" id="pay-crypto">
+      <a class="legal-back" href="./pay-method.html">Назад</a>
       <h2 class="pay-title">Криптовалюта</h2>
-      <div class="pay-stage">
-      <div class="coin-list">
-        <button class="tariff-price" type="button">
-          USD
+      <button class="pay-btn crypto-toggle" type="button" id="crypto-toggle" aria-expanded="false" aria-controls="coin-list">
+        Выбрать криптовалюту
+      </button>
+      <div class="coin-list" id="coin-list" hidden>
+        <button class="method-btn coin-row" type="button" data-coin="usd">
+          <b>USD</b>
           <svg class="coin-mark" viewBox="0 0 32 32" aria-hidden="true">
             <circle cx="16" cy="16" r="16" fill="#26A17B" />
             <path fill="#fff" d="M17.9 17.2v-2.1h5.1V12H9v3.1h5.1v2.1c-4.2.2-7.4 1-7.4 2.1s3.2 1.9 7.4 2.1v7.5h3.8v-7.5c4.2-.2 7.4-1 7.4-2.1s-3.2-1.9-7.4-2.1zm0 3.6v-.1c-.2 0-.9.1-1.9.1s-1.7 0-1.9-.1v.1c-3.7-.2-6.4-.8-6.4-1.6s2.7-1.4 6.4-1.6v2.5c.2 0 1 .1 1.9.1s1.7 0 1.9-.1v-2.5c3.6.2 6.3.8 6.3 1.6s-2.6 1.4-6.3 1.6z" />
           </svg>
         </button>
-        <button class="tariff-price" type="button">
-          ETH
+        <button class="method-btn coin-row" type="button" data-coin="eth">
+          <b>ETH</b>
           <svg class="coin-mark" viewBox="0 0 32 32" aria-hidden="true">
             <circle cx="16" cy="16" r="16" fill="#627EEA" />
             <path fill="#fff" fill-opacity=".6" d="M16.5 5.5 10 16.3l6.5 3.8 6.5-3.8z" />
@@ -41,15 +43,15 @@
             <path fill="#fff" fill-opacity=".6" d="m16.5 20.1 6.5-3.8-6.5 3.8z" />
           </svg>
         </button>
-        <button class="tariff-price" type="button">
-          BTC
+        <button class="method-btn coin-row" type="button" data-coin="btc">
+          <b>BTC</b>
           <svg class="coin-mark" viewBox="0 0 32 32" aria-hidden="true">
             <circle cx="16" cy="16" r="16" fill="#F7931A" />
             <path fill="#fff" d="M22.3 14.2c.3-2-1.2-3.1-3.3-3.8l.7-2.7-1.6-.4-.6 2.6c-.4-.1-.9-.2-1.3-.3l.7-2.7-1.6-.4-.7 2.7c-.3-.1-.7-.2-1-.2l-2.2-.5-.4 1.7s1.2.3 1.2.3c.6.2.8.6.7 1l-.8 3.2c.1 0 .1.1.2 0l-.2-.1-1.1 4.4c-.1.2-.3.5-.8.4 0 0-1.2-.3-1.2-.3l-.8 1.8 2.1.5c.4.1.8.2 1.1.3l-.7 2.8 1.6.4.7-2.7c.4.1.9.2 1.3.3l-.7 2.7 1.6.4.7-2.8c2.9.6 5.1.3 6-2.3.7-2.1-.1-3.3-1.6-4.1 1.1-.3 2-1 2.2-2.5zm-3.9 5.4c-.5 2.1-4 1-5.1.7l.9-3.7c1.2.3 4.7.8 4.2 3zm.5-5.4c-.5 1.9-3.4.9-4.4.7l.8-3.3c1 .3 4 .7 3.6 2.6z" />
           </svg>
         </button>
-        <button class="tariff-price" type="button">
-          SOL
+        <button class="method-btn coin-row" type="button" data-coin="sol">
+          <b>SOL</b>
           <svg class="coin-mark" viewBox="0 0 32 32" aria-hidden="true">
             <defs>
               <linearGradient id="sol-mark" x1="6" y1="26" x2="26" y2="6" gradientUnits="userSpaceOnUse">
@@ -62,8 +64,18 @@
           </svg>
         </button>
       </div>
+      <div class="crypto-modal" id="crypto-modal" hidden>
+        <button class="crypto-backdrop" type="button" id="crypto-close" aria-label="Закрыть"></button>
+        <div class="crypto-card" role="dialog" aria-modal="true" aria-labelledby="crypto-name">
+          <h3 id="crypto-name">USD</h3>
+          <div class="crypto-qr" id="crypto-qr"></div>
+          <button class="crypto-wallet" type="button" id="crypto-wallet">Кошелёк появится позже</button>
+          <button class="crypto-dismiss" type="button" id="crypto-dismiss">Закрыть</button>
+        </div>
       </div>
+      <p class="toast" id="toast" hidden></p>
     </main>
-    <script src="./app.js?v=3"></script>
+    <script src="./qrcode.js?v=4"></script>
+    <script src="./app.js?v=4"></script>
   </body>
 </html>

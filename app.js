@@ -395,7 +395,7 @@ function toast(text) {
   }, 2200);
 }
 
-const PROFILE_FIELDS = ["config", "key", "until", "uid", "tokens", "refs"];
+const PROFILE_FIELDS = ["config", "key", "until", "uid", "tokens", "refs", "api"];
 const PROFILE_STORE = "aevum-profile";
 
 function profileFromParams(params) {
@@ -522,6 +522,7 @@ function startApp() {
   });
   bindOfferPicks();
   renderPayMethod();
+  renderCrypto();
 }
 
 const OFFERS = {
@@ -579,15 +580,6 @@ function openStarInvoice(url) {
   window.location.href = url;
 }
 
-function openTokenSpend(code) {
-  const allowed = ["token1", "token3", "token12", "tokenbasic", "tokenpro"];
-  if (!allowed.includes(code)) return;
-  const url = "https://t.me/theaevum_bot?start=" + code;
-  const app = telegramApp();
-  if (app?.openTelegramLink) app.openTelegramLink(url);
-  else window.location.href = url;
-}
-
 function bindOfferPicks() {
   document.querySelectorAll(".offer-pick").forEach((link) => {
     if (link.dataset.bound) return;
@@ -599,6 +591,168 @@ function bindOfferPicks() {
       window.location.href = "./pay-method.html?" + params.toString();
     });
   });
+}
+
+const TOKEN_COST = { "1": 2, "3": 6, "12": 24 };
+const TOKEN_API = "";
+let tokenSpendBusy = false;
+
+function tokenBalance() {
+  const raw = queryValue("tokens");
+  return /^\d+$/.test(raw) ? Number(raw) : 0;
+}
+
+function tokenApi() {
+  const fromQuery = queryValue("api");
+  if (/^https:\/\/.+/i.test(fromQuery)) return fromQuery.replace(/\/$/, "") + "/api/tokens";
+  if (/^https:\/\/.+/i.test(TOKEN_API)) return TOKEN_API.replace(/\/$/, "") + "/api/tokens";
+  return "";
+}
+
+function rememberPaidProfile(tokens, until) {
+  const params = new URLSearchParams(window.location.search);
+  if (tokens != null && tokens !== "") params.set("tokens", String(tokens));
+  if (until) params.set("until", until);
+  history.replaceState(null, "", window.location.pathname + "?" + params.toString() + window.location.hash);
+  const data = {};
+  PROFILE_FIELDS.forEach((name) => {
+    const value = params.get(name) || "";
+    if (value) data[name] = value;
+  });
+  if (!String(data.key || "").startsWith("vless://")) return;
+  writeBrowserProfile(data);
+  const app = telegramApp();
+  storageSet(app?.DeviceStorage, data);
+  storageSet(app?.CloudStorage, data);
+}
+
+async function spendTokens(plan) {
+  if (tokenSpendBusy) return;
+  const offer = OFFERS[plan];
+  const cost = TOKEN_COST[plan] || 0;
+  if (!offer || !cost) return;
+  if (isOwner()) {
+    toast("У вас уже безлимитный доступ.");
+    return;
+  }
+  if (tokenBalance() < cost) {
+    toast("недостаточно токенов для оплаты");
+    return;
+  }
+  const endpoint = tokenApi();
+  const initData = telegramApp()?.initData || "";
+  if (!endpoint || !initData) {
+    toast("Не удалось списать токены. Попробуйте ещё раз.");
+    return;
+  }
+  tokenSpendBusy = true;
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ initData, code: offer.token }),
+    });
+    const data = await response.json();
+    if (!data.ok) {
+      if (data.error === "low") toast("недостаточно токенов для оплаты");
+      else if (data.error === "owner") toast("У вас уже безлимитный доступ.");
+      else toast("Не удалось списать токены. Попробуйте ещё раз.");
+      if (data.tokens != null) rememberPaidProfile(data.tokens, "");
+      return;
+    }
+    rememberPaidProfile(data.tokens, data.until || "");
+    toast(data.until ? "Подписка продлена до " + data.until : "Подписка продлена");
+  } catch {
+    toast("Не удалось списать токены. Попробуйте ещё раз.");
+  } finally {
+    tokenSpendBusy = false;
+  }
+}
+
+function qrDataUrl(text) {
+  if (!text || typeof qrcode !== "function") return "";
+  try {
+    const code = qrcode(0, "M");
+    code.addData(text);
+    code.make();
+    return code.createDataURL(6, 0);
+  } catch {
+    return "";
+  }
+}
+
+function renderCrypto() {
+  const page = document.getElementById("pay-crypto");
+  if (!page || page.dataset.bound) return;
+  page.dataset.bound = "1";
+  const catalog = {
+    usd: { name: "USD", wallet: "", qr: "" },
+    eth: { name: "ETH", wallet: "", qr: "" },
+    btc: { name: "BTC", wallet: "", qr: "" },
+    sol: { name: "SOL", wallet: "", qr: "" },
+  };
+  const list = document.getElementById("coin-list");
+  const toggle = document.getElementById("crypto-toggle");
+  const modal = document.getElementById("crypto-modal");
+  const qrBox = document.getElementById("crypto-qr");
+  const walletButton = document.getElementById("crypto-wallet");
+  let currentWallet = "";
+
+  const closeModal = () => {
+    if (modal) modal.hidden = true;
+  };
+  toggle?.addEventListener("click", () => {
+    if (!list) return;
+    list.hidden = !list.hidden;
+    toggle.setAttribute("aria-expanded", list.hidden ? "false" : "true");
+  });
+  document.getElementById("crypto-close")?.addEventListener("click", closeModal);
+  document.getElementById("crypto-dismiss")?.addEventListener("click", closeModal);
+  walletButton?.addEventListener("click", async () => {
+    if (!currentWallet) {
+      toast("Кошелёк появится позже.");
+      return;
+    }
+    toast((await copyText(currentWallet)) ? "кошелёк скопирован" : "Не удалось скопировать.");
+  });
+  page.querySelectorAll("[data-coin]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const item = catalog[button.dataset.coin || ""] || { name: button.textContent.trim(), wallet: "", qr: "" };
+      const title = document.getElementById("crypto-name");
+      if (title) title.textContent = item.name || button.textContent.trim();
+      currentWallet = item.wallet || "";
+      if (walletButton) {
+        walletButton.textContent = currentWallet || "Кошелёк появится позже";
+      }
+      if (qrBox) {
+        qrBox.replaceChildren();
+        const src = item.qr || qrDataUrl(currentWallet);
+        if (src) {
+          const image = document.createElement("img");
+          image.src = src;
+          image.alt = "QR-код";
+          qrBox.append(image);
+        } else {
+          const empty = document.createElement("span");
+          empty.textContent = "QR появится позже";
+          qrBox.append(empty);
+        }
+      }
+      if (modal) modal.hidden = false;
+    });
+  });
+  fetch("./crypto.json?v=4")
+    .then((response) => (response.ok ? response.json() : null))
+    .then((data) => {
+      if (!data || typeof data !== "object") return;
+      Object.keys(catalog).forEach((id) => {
+        const row = data[id];
+        if (!row || typeof row !== "object") return;
+        catalog[id].wallet = String(row.wallet || "");
+        catalog[id].qr = String(row.qr || "");
+      });
+    })
+    .catch(() => {});
 }
 
 function renderPayMethod() {
@@ -632,10 +786,11 @@ function renderPayMethod() {
     openStarInvoice(offer.invoice);
   });
   document.getElementById("pay-crypto")?.addEventListener("click", () => {
-    showPayStatus("Цены в криптовалюте появятся позже.");
+    const params = new URLSearchParams(window.location.search);
+    window.location.href = "./pay-crypto.html?" + params.toString();
   });
   document.getElementById("pay-token")?.addEventListener("click", () => {
-    openTokenSpend(offer.token);
+    spendTokens(queryValue("plan"));
   });
 }
 
@@ -732,7 +887,12 @@ function renderPartner() {
 document.querySelectorAll("[data-token]").forEach((button) => {
   button.addEventListener("click", () => {
     const code = button.dataset.token || "";
-    openTokenSpend(code);
+    if (code === "tokenpro") {
+      toast("Этот тариф больше не действует.");
+      return;
+    }
+    const plan = code === "token3" ? "3" : code === "token12" ? "12" : "1";
+    spendTokens(plan);
   });
 });
 

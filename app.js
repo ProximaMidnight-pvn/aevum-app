@@ -594,7 +594,7 @@ function bindOfferPicks() {
 }
 
 const TOKEN_COST = { "1": 2, "3": 6, "12": 24 };
-const TOKEN_API = "";
+const TOKEN_API = "https://ea5fa4173be40c.lhr.life";
 let tokenSpendBusy = false;
 
 function tokenBalance() {
@@ -635,14 +635,11 @@ async function spendTokens(plan) {
     toast("У вас уже безлимитный доступ.");
     return;
   }
-  if (tokenBalance() < cost) {
-    toast("недостаточно токенов для оплаты");
-    return;
-  }
   const endpoint = tokenApi();
   const initData = telegramApp()?.initData || "";
   if (!endpoint || !initData) {
-    toast("Не удалось списать токены. Попробуйте ещё раз.");
+    if (tokenBalance() < cost) toast("недостаточно токенов для оплаты");
+    else toast("Не удалось списать токены. Попробуйте ещё раз.");
     return;
   }
   tokenSpendBusy = true;
@@ -741,7 +738,7 @@ function renderCrypto() {
       if (modal) modal.hidden = false;
     });
   });
-  fetch("./crypto.json?v=4")
+  fetch("./crypto.json?v=5")
     .then((response) => (response.ok ? response.json() : null))
     .then((data) => {
       if (!data || typeof data !== "object") return;

@@ -594,7 +594,7 @@ function bindOfferPicks() {
 }
 
 const TOKEN_COST = { "1": 2, "3": 6, "12": 24 };
-const TOKEN_API = "https://bright-bear-c86f0107.tunnl.gg";
+const TOKEN_API = "https://aevumapp.ru";
 let tokenSpendBusy = false;
 
 function tokenBalance() {

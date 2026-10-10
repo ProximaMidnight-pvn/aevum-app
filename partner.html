@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=7" />
+    <link rel="stylesheet" href="./styles.css?v=9" />
   </head>
   <body>
     <main class="app partner-page">
@@ -28,13 +28,14 @@
           <p class="invite-label">Моя пригласительная ссылка на бот</p>
           <p class="invite-url" id="ref-link">Ссылка появится после входа через бота.</p>
         </div>
-        <button class="invite-copy" type="button" id="ref-copy" aria-label="Скопировать ссылку">
+        <button class="invite-copy" type="button" id="ref-send-icon" aria-label="Отправить ссылку">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="8" y="8" width="12" height="12" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.6" />
-            <rect x="4" y="4" width="12" height="12" rx="2.2" fill="#10182a" stroke="currentColor" stroke-width="1.6" />
+            <path d="M4 12.2 20 4.5 14.2 20l-2.4-6.2L4 12.2Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+            <path d="M11.8 13.8 20 4.5" fill="none" stroke="currentColor" stroke-width="1.6" />
           </svg>
         </button>
       </section>
+      <button class="invite-send" type="button" id="ref-send">Отправить</button>
       <section class="ref-box">
         <button class="ref-toggle" type="button" id="ref-toggle" aria-expanded="false">
           Мои рефералы
@@ -46,6 +47,6 @@
       </p>
       <p class="toast" id="toast" hidden></p>
     </main>
-    <script src="./app.js?v=7"></script>
+    <script src="./app.js?v=9"></script>
   </body>
 </html>

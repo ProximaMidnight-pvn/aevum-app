@@ -594,7 +594,7 @@ function bindOfferPicks() {
 }
 
 const TOKEN_COST = { "1": 2, "3": 6, "12": 24 };
-const TOKEN_API = "https://c146a324680278.lhr.life";
+const TOKEN_API = "https://48a27c457c9d69.lhr.life";
 let tokenSpendBusy = false;
 
 function tokenBalance() {
@@ -602,11 +602,16 @@ function tokenBalance() {
   return /^\d+$/.test(raw) ? Number(raw) : 0;
 }
 
-function tokenApi() {
-  if (/^https:\/\/.+/i.test(TOKEN_API)) return TOKEN_API.replace(/\/$/, "") + "/api/tokens";
-  const fromQuery = queryValue("api");
-  if (/^https:\/\/.+/i.test(fromQuery)) return fromQuery.replace(/\/$/, "") + "/api/tokens";
-  return "";
+function tokenEndpoints() {
+  const urls = [];
+  const add = (base) => {
+    if (!/^https:\/\/.+/i.test(base || "")) return;
+    const url = base.replace(/\/$/, "") + "/api/tokens";
+    if (!urls.includes(url)) urls.push(url);
+  };
+  add(queryValue("api"));
+  add(TOKEN_API);
+  return urls;
 }
 
 function untilStamp(value) {
@@ -673,33 +678,40 @@ async function spendTokens(plan) {
     toast("У вас уже безлимитный доступ.");
     return;
   }
-  const endpoint = tokenApi();
+  const endpoints = tokenEndpoints();
   const initData = telegramApp()?.initData || "";
-  if (!endpoint || !initData) {
+  if (!endpoints.length || !initData) {
     if (tokenBalance() < cost) toast("недостаточно токенов для оплаты");
     else toast("Не удалось списать токены. Попробуйте ещё раз.");
     return;
   }
   tokenSpendBusy = true;
   try {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ initData, code: offer.token }),
-    });
-    const data = await response.json();
-    if (!data.ok) {
-      if (data.error === "low") toast("недостаточно токенов для оплаты");
-      else if (data.error === "owner") toast("У вас уже безлимитный доступ.");
-      else toast("Не удалось списать токены. Попробуйте ещё раз.");
-      if (data.tokens != null) rememberPaidProfile(data.tokens, "");
+    for (const endpoint of endpoints) {
+      let data;
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ initData, code: offer.token }),
+        });
+        data = await response.json();
+      } catch {
+        continue;
+      }
+      if (!data.ok) {
+        if (data.error === "low") toast("недостаточно токенов для оплаты");
+        else if (data.error === "owner") toast("У вас уже безлимитный доступ.");
+        else toast("Не удалось списать токены. Попробуйте ещё раз.");
+        if (data.tokens != null) rememberPaidProfile(data.tokens, "");
+        return;
+      }
+      rememberPaidProfile(data.tokens, data.until || "");
+      const confirm = document.getElementById("token-confirm");
+      if (confirm) confirm.hidden = true;
+      toast(data.until ? "Подписка продлена до " + data.until : "Подписка продлена");
       return;
     }
-    rememberPaidProfile(data.tokens, data.until || "");
-    const confirm = document.getElementById("token-confirm");
-    if (confirm) confirm.hidden = true;
-    toast(data.until ? "Подписка продлена до " + data.until : "Подписка продлена");
-  } catch {
     toast("Не удалось списать токены. Попробуйте ещё раз.");
   } finally {
     tokenSpendBusy = false;
@@ -778,7 +790,7 @@ function renderCrypto() {
       if (modal) modal.hidden = false;
     });
   });
-  fetch("./crypto.json?v=7")
+  fetch("./crypto.json?v=9")
     .then((response) => (response.ok ? response.json() : null))
     .then((data) => {
       if (!data || typeof data !== "object") return;
@@ -890,6 +902,69 @@ function referralLink() {
   return id ? "https://t.me/theaevum_bot?start=ref" + id : "";
 }
 
+function shareReferral() {
+  const link = referralLink();
+  if (!link) {
+    toast("Ссылка появится после входа через бота.");
+    return;
+  }
+  const share = "https://t.me/share/url?url=" + encodeURIComponent(link) + "&text=" + encodeURIComponent("Присоединяйся ко мне в Aevum VPN");
+  const app = telegramApp();
+  if (app?.openTelegramLink) app.openTelegramLink(share);
+  else window.location.href = share;
+}
+
+function paintReferrals(list, names) {
+  list.replaceChildren();
+  if (!names.length) {
+    const empty = document.createElement("p");
+    empty.textContent = "Пока никого нет.";
+    list.append(empty);
+    return;
+  }
+  const items = document.createElement("ul");
+  names.forEach((name) => {
+    const item = document.createElement("li");
+    item.textContent = name;
+    items.append(item);
+  });
+  list.append(items);
+}
+
+function referralNamesFromQuery() {
+  return queryValue("refs")
+    .split(",")
+    .map((name) => name.trim())
+    .filter(Boolean);
+}
+
+async function fetchReferralNames() {
+  const initData = telegramApp()?.initData || "";
+  if (!initData) return null;
+  const bases = [];
+  const add = (base) => {
+    if (!/^https:\/\/.+/i.test(base || "")) return;
+    const url = base.replace(/\/$/, "");
+    if (!bases.includes(url)) bases.push(url);
+  };
+  add(queryValue("api"));
+  add(TOKEN_API);
+  for (const base of bases) {
+    try {
+      const response = await fetch(base + "/api/referrals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ initData }),
+      });
+      const data = await response.json();
+      if (data.ok && Array.isArray(data.refs)) return data.refs;
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
+
 function renderPartner() {
   const badge = document.getElementById("token-badge");
   const linkNode = document.getElementById("ref-link");
@@ -902,39 +977,24 @@ function renderPartner() {
   const link = referralLink();
   linkNode.textContent = link || "Ссылка появится после входа через бота.";
   linkNode.classList.toggle("is-empty", !link);
+  let names = referralNamesFromQuery();
+  const showNames = () => {
+    if (!list.hidden) paintReferrals(list, names);
+  };
   if (toggle.dataset.bound) return;
   toggle.dataset.bound = "1";
   toggle.addEventListener("click", () => {
     const open = list.hidden;
     list.hidden = !open;
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
-    if (!open) return;
-    list.replaceChildren();
-    const refs = queryValue("refs")
-      .split(",")
-      .map((name) => name.trim())
-      .filter(Boolean);
-    if (!refs.length) {
-      const empty = document.createElement("p");
-      empty.textContent = "Пока никого нет.";
-      list.append(empty);
-      return;
-    }
-    const items = document.createElement("ul");
-    refs.forEach((name) => {
-      const item = document.createElement("li");
-      item.textContent = name;
-      items.append(item);
-    });
-    list.append(items);
+    if (open) showNames();
   });
-  document.getElementById("ref-copy")?.addEventListener("click", async () => {
-    const current = referralLink();
-    if (!current) {
-      toast("Ссылка появится после входа через бота.");
-      return;
-    }
-    toast((await copyText(current)) ? "ссылка скопирована" : "Не удалось скопировать.");
+  document.getElementById("ref-send")?.addEventListener("click", shareReferral);
+  document.getElementById("ref-send-icon")?.addEventListener("click", shareReferral);
+  fetchReferralNames().then((fresh) => {
+    if (!fresh) return;
+    names = fresh;
+    showNames();
   });
 }
 

@@ -1,6 +1,6 @@
 const LOCATIONS = [
   { code: "DE", flag: "🇩🇪" },
-  { code: "SG", flag: "🇸🇬" },
+  { code: "FR", flag: "🇫🇷" },
   { code: "UK", flag: "🇬🇧" },
   { code: "KZ", flag: "🇰🇿" },
   { code: "RU", flag: "🇷🇺" },
@@ -336,18 +336,22 @@ function preserveAppLinks() {
   });
 }
 
-function renderConfig() {
-  const page = document.getElementById("config-page");
-  if (!page) return;
-  const params = new URLSearchParams(window.location.search);
-  const key = params.get("key") || "";
-  const keyNode = document.getElementById("de-key");
-  const copyKey = document.getElementById("copy-key");
+function franceKey(german) {
+  if (!german.startsWith("vless://")) return "";
+  const at = german.indexOf("@");
+  const query = german.indexOf("?");
+  if (at < 0 || query < at) return "";
+  const tail = german.slice(query).split("#")[0];
+  return german.slice(0, at + 1) + "89.125.30.112:7443" + tail + "#FR";
+}
 
+function bindServerKey(foldId, keyId, copyId, value) {
+  const keyNode = document.getElementById(keyId);
+  const fold = document.getElementById(foldId);
+  const copyKey = document.getElementById(copyId);
   if (keyNode) {
-    keyNode.textContent = key || "Ключ появится после повторного /start.";
+    keyNode.textContent = value || "Ключ появится после повторного /start.";
   }
-  const fold = document.getElementById("de-fold");
   if (fold && !fold.dataset.bound) {
     fold.dataset.bound = "1";
     fold.addEventListener("click", () => {
@@ -357,11 +361,19 @@ function renderConfig() {
   if (!copyKey || copyKey.dataset.bound) return;
   copyKey.dataset.bound = "1";
   copyKey.addEventListener("click", () => {
-    const value = keyNode?.textContent || "";
-    if (!value.startsWith("vless://")) return;
-    copyText(value);
+    const text = keyNode?.textContent || "";
+    if (!text.startsWith("vless://")) return;
+    copyText(text);
     copyKey.textContent = "Ключ скопирован";
   });
+}
+
+function renderConfig() {
+  const page = document.getElementById("config-page");
+  if (!page) return;
+  const key = new URLSearchParams(window.location.search).get("key") || "";
+  bindServerKey("de-fold", "de-key", "copy-key", key);
+  bindServerKey("fr-fold", "fr-key", "copy-fr", franceKey(key));
 }
 
 function renderLocations() {

@@ -814,7 +814,10 @@ function renderCrypto() {
   let quoteText = "";
   let busy = false;
 
+  const plan = queryValue("plan");
   const amountOf = (coin) => {
+    const ready = rates.quotes && rates.quotes[plan] && rates.quotes[plan][coin];
+    if (ready) return ready;
     const price = Number(rates[coin] || 0);
     if (!rub || !price) return "";
     return (rub / price).toFixed(digits[coin]);

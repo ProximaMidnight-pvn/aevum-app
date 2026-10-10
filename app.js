@@ -594,7 +594,7 @@ function bindOfferPicks() {
 }
 
 const TOKEN_COST = { "1": 2, "3": 6, "12": 24 };
-const TOKEN_API = "https://2ad67a32d7941c.lhr.life";
+const TOKEN_API = "https://ba2ab02edda7fc.lhr.life";
 let tokenSpendBusy = false;
 
 function tokenBalance() {
@@ -790,7 +790,7 @@ function renderCrypto() {
       if (modal) modal.hidden = false;
     });
   });
-  fetch("./crypto.json?v=10")
+  fetch("./crypto.json?v=11")
     .then((response) => (response.ok ? response.json() : null))
     .then((data) => {
       if (!data || typeof data !== "object") return;
@@ -902,16 +902,49 @@ function referralLink() {
   return id ? "https://t.me/theaevum_bot?start=ref" + id : "";
 }
 
-function shareReferral() {
+function openShareUrl(link) {
+  const share = "https://t.me/share/url?url=" + encodeURIComponent(link) + "&text=" + encodeURIComponent("\nПрисоединяйся ко мне в Aevum VPN!");
+  const app = telegramApp();
+  if (app?.openTelegramLink) app.openTelegramLink(share);
+  else window.location.href = share;
+}
+
+async function shareReferral() {
   const link = referralLink();
   if (!link) {
     toast("Ссылка появится после входа через бота.");
     return;
   }
-  const share = "https://t.me/share/url?url=" + encodeURIComponent(link) + "&text=" + encodeURIComponent("Присоединяйся ко мне в Aevum VPN");
   const app = telegramApp();
-  if (app?.openTelegramLink) app.openTelegramLink(share);
-  else window.location.href = share;
+  const initData = app?.initData || "";
+  if (app?.shareMessage && initData) {
+    const bases = [];
+    const add = (base) => {
+      if (!/^https:\/\/.+/i.test(base || "")) return;
+      const url = base.replace(/\/$/, "");
+      if (!bases.includes(url)) bases.push(url);
+    };
+    add(queryValue("api"));
+    add(TOKEN_API);
+    for (const base of bases) {
+      try {
+        const response = await fetch(base + "/api/invite", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ initData }),
+        });
+        const data = await response.json();
+        if (!data.ok || !data.id) continue;
+        app.shareMessage(data.id, (sent) => {
+          if (!sent) openShareUrl(link);
+        });
+        return;
+      } catch {
+        continue;
+      }
+    }
+  }
+  openShareUrl(link);
 }
 
 function paintReferrals(list, names) {

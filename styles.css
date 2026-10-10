@@ -1755,8 +1755,9 @@ button {
 
 .crypto-card {
   position: relative;
-  width: min(100%, 320px);
-  padding: 18px 16px 14px;
+  z-index: 1;
+  width: min(100%, 460px);
+  padding: 16px 12px 14px;
   border-radius: 22px;
   background: rgba(8, 14, 28, 0.94);
   border: 1px solid var(--glass-border);
@@ -1785,6 +1786,10 @@ button {
 
 .crypto-nets[hidden] {
   display: none;
+}
+
+.crypto-nets .method-btn.is-on {
+  border-color: var(--gold, #e7c27a);
 }
 
 .crypto-net {
@@ -1834,23 +1839,29 @@ button {
   padding: 12px;
 }
 
+.crypto-amount {
+  margin: 8px 0 0;
+  color: var(--gold, #e7c27a);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.crypto-amount:empty {
+  display: none;
+}
+
 .crypto-qr {
-  display: grid;
-  place-items: center;
-  width: 200px;
-  height: 200px;
-  margin: 14px auto;
-  border-radius: 16px;
+  width: 100%;
+  margin: 12px 0 0;
+  border-radius: 18px;
   background: #fff;
-  color: #5c6570;
-  font-size: 14px;
-  text-align: center;
+  overflow: hidden;
 }
 
 .crypto-qr img {
   display: block;
-  width: 180px;
-  height: 180px;
+  width: 100%;
+  height: auto;
 }
 
 .crypto-wallet {

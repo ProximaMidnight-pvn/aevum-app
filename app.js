@@ -594,7 +594,7 @@ function bindOfferPicks() {
 }
 
 const TOKEN_COST = { "1": 2, "3": 6, "12": 24 };
-const TOKEN_API = "https://46e999ca9b36fd.lhr.life";
+const TOKEN_API = "https://35a726cc28b909.lhr.life";
 let tokenSpendBusy = false;
 
 function tokenBalance() {
@@ -813,6 +813,11 @@ function renderCrypto() {
       const amount = amountOf(coin);
       node.textContent = amount ? amount + " " + (coin === "usd" ? "USDT" : coin.toUpperCase()) : "—";
     });
+    const amountLine = document.getElementById("crypto-amount");
+    if (amountLine && picked) {
+      const due = amountOf(picked);
+      amountLine.textContent = due ? "К переводу: " + due + " " + (picked === "usd" ? "USDT" : picked.toUpperCase()) : "";
+    }
   };
   const secondsLeft = () => {
     const mod = Math.floor(Date.now() / 1000) % 60;
@@ -883,6 +888,7 @@ function renderCrypto() {
   netList?.querySelectorAll("[data-net]").forEach((button) => {
     button.addEventListener("click", () => {
       pickedNet = button.dataset.net || "";
+      netList.querySelectorAll("[data-net]").forEach((item) => item.classList.toggle("is-on", item === button));
       showWallet(usdNets[pickedNet] || {});
       if (netList) netList.hidden = true;
     });
@@ -896,12 +902,17 @@ function renderCrypto() {
       if (title) title.textContent = item.name || picked.toUpperCase();
       if (netWrap) netWrap.hidden = picked !== "usd";
       if (netList) netList.hidden = true;
+      const amountLine = document.getElementById("crypto-amount");
+      const due = amountOf(picked);
+      if (amountLine) amountLine.textContent = due ? "К переводу: " + due + " " + (picked === "usd" ? "USDT" : picked.toUpperCase()) : "";
       if (picked === "usd") {
         currentWallet = "";
-        quoteText = amountOf("usd");
+        quoteText = due;
         if (walletBox) walletBox.textContent = "Сначала выберите сеть";
         if (netBox) netBox.hidden = true;
         if (qrBox) qrBox.replaceChildren();
+        if (netList) netList.hidden = false;
+        document.getElementById("crypto-net-pick")?.setAttribute("aria-expanded", "true");
       } else {
         showWallet(item);
       }

@@ -594,7 +594,7 @@ function bindOfferPicks() {
 }
 
 const TOKEN_COST = { "1": 2, "3": 6, "12": 24 };
-const TOKEN_API = "https://745c325e06e5ec.lhr.life";
+const TOKEN_API = "https://c146a324680278.lhr.life";
 let tokenSpendBusy = false;
 
 function tokenBalance() {
@@ -778,7 +778,7 @@ function renderCrypto() {
       if (modal) modal.hidden = false;
     });
   });
-  fetch("./crypto.json?v=6")
+  fetch("./crypto.json?v=7")
     .then((response) => (response.ok ? response.json() : null))
     .then((data) => {
       if (!data || typeof data !== "object") return;

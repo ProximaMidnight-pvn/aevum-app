@@ -1,6 +1,34 @@
 {
-  "usd": { "wallet": "", "qr": "" },
-  "eth": { "wallet": "", "qr": "" },
-  "btc": { "wallet": "", "qr": "" },
-  "sol": { "wallet": "", "qr": "" }
+  "btc": {
+    "wallet": "bc1q84546pxu6hnvvejd2dsp9a47asxh4ls6j3y6ea",
+    "qr": "./qr/btc.jpg",
+    "network": "Bitcoin",
+    "mark": "₿"
+  },
+  "eth": {
+    "wallet": "0x7C7D7885A2F73816d93F0D66699DC62381925513",
+    "qr": "./qr/eth.jpg",
+    "network": "ERC20 (ETH)",
+    "mark": "🔷"
+  },
+  "sol": {
+    "wallet": "9Lyt7RBovaLDJoBBKwrN1QcVXMEixP4CBDiKvc8ivC8J",
+    "qr": "./qr/sol.jpg",
+    "network": "Solana",
+    "mark": "🟣"
+  },
+  "usd": {
+    "trc20": {
+      "wallet": "TBVfLPoeN5RP2JUBnQsbzKgBdSFRYLzGWA",
+      "qr": "./qr/trx.jpg",
+      "network": "TRC20 (TRX)",
+      "mark": "🔴"
+    },
+    "erc20": {
+      "wallet": "0x7C7D7885A2F73816d93F0D66699DC62381925513",
+      "qr": "./qr/eth.jpg",
+      "network": "ERC20 (ETH)",
+      "mark": "🔷"
+    }
+  }
 }

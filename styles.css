@@ -1712,6 +1712,30 @@ button {
   font-weight: 500;
 }
 
+.coin-side {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.coin-quote {
+  color: var(--gold, #e7c27a);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rate-timer {
+  margin: 8px 0 0;
+  text-align: center;
+  color: rgba(243, 238, 230, 0.82);
+  font-size: 13px;
+}
+
+.crypto-paid {
+  margin-top: 14px;
+}
+
 .crypto-modal {
   position: fixed;
   inset: 0;
@@ -1741,8 +1765,73 @@ button {
 
 .crypto-card h3 {
   margin: 0;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 500;
+}
+
+.crypto-net-wrap {
+  margin-top: 12px;
+}
+
+.crypto-net-pick {
+  margin-top: 0;
+}
+
+.crypto-nets {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.crypto-nets[hidden] {
+  display: none;
+}
+
+.crypto-net {
+  margin: 12px 0 0;
+  color: #f3eee6;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.crypto-net[hidden],
+.crypto-net-wrap[hidden] {
+  display: none;
+}
+
+.crypto-address {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.crypto-address span {
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+.crypto-copy,
+.txid-input {
+  width: 100%;
+  border-radius: 14px;
+  font: inherit;
+}
+
+.crypto-copy {
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: #f3eee6;
+  padding: 10px 12px;
+}
+
+.txid-input {
+  margin-top: 14px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f3eee6;
+  padding: 12px;
 }
 
 .crypto-qr {

@@ -336,15 +336,6 @@ function preserveAppLinks() {
   });
 }
 
-function franceKey(german) {
-  if (!german.startsWith("vless://")) return "";
-  const at = german.indexOf("@");
-  const query = german.indexOf("?");
-  if (at < 0 || query < at) return "";
-  const tail = german.slice(query).split("#")[0];
-  return german.slice(0, at + 1) + "89.125.30.112:7443" + tail + "#FR";
-}
-
 function bindServerKey(foldId, keyId, copyId, value) {
   const keyNode = document.getElementById(keyId);
   const fold = document.getElementById(foldId);
@@ -373,7 +364,6 @@ function renderConfig() {
   if (!page) return;
   const key = new URLSearchParams(window.location.search).get("key") || "";
   bindServerKey("de-fold", "de-key", "copy-key", key);
-  bindServerKey("fr-fold", "fr-key", "copy-fr", franceKey(key));
 }
 
 function renderLocations() {

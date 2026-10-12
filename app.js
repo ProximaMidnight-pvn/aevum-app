@@ -361,8 +361,9 @@ function bindServerKey(foldId, keyId, copyId, value) {
 function renderConfig() {
   const page = document.getElementById("config-page");
   if (!page) return;
-  const key = new URLSearchParams(window.location.search).get("key") || "";
-  bindServerKey("de-fold", "de-key", "copy-key", key);
+  const params = new URLSearchParams(window.location.search);
+  bindServerKey("de-fold", "de-key", "copy-key", params.get("key") || "");
+  bindServerKey("kz-fold", "kz-key", "copy-kz", params.get("kz") || "");
 }
 
 function renderLocations() {
@@ -396,7 +397,7 @@ function toast(text) {
   }, 2200);
 }
 
-const PROFILE_FIELDS = ["config", "key", "until", "uid", "tokens", "refs", "api"];
+const PROFILE_FIELDS = ["config", "key", "kz", "until", "uid", "tokens", "refs", "api"];
 const PROFILE_STORE = "aevum-profile";
 
 function profileFromParams(params) {

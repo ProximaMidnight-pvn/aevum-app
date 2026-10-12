@@ -557,6 +557,34 @@ const OFFERS = {
   },
 };
 
+async function startYooKassa(plan) {
+  const initData = telegramApp()?.initData || "";
+  if (!initData) {
+    showPayStatus("Откройте приложение через кнопку «Подключиться».");
+    return;
+  }
+  showPayStatus("Открываю оплату…");
+  for (const base of apiBases()) {
+    try {
+      const response = await fetch(base + "/api/yookassa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ initData, plan }),
+      });
+      const data = await response.json();
+      if (!data.ok || !data.url) continue;
+      const tg = telegramApp();
+      if (tg?.openLink) tg.openLink(data.url);
+      else window.location.href = data.url;
+      showPayStatus("Откройте страницу оплаты и завершите платёж.");
+      return;
+    } catch {
+      continue;
+    }
+  }
+  showPayStatus("Не удалось открыть оплату. Попробуйте ещё раз.");
+}
+
 function showPayStatus(text) {
   const status = document.getElementById("pay-status");
   if (!status) return;
@@ -1029,8 +1057,11 @@ function renderPayMethod() {
   if (stars) stars.textContent = offer.stars;
   if (tokens) tokens.textContent = offer.tokens;
   document.getElementById("pay-sbp")?.addEventListener("click", () => {
-    showPayStatus("Оплата через СБП появится позже. Сумма: " + offer.rub + ".");
+    startYooKassa(queryValue("plan"));
   });
+  if (queryValue("paid") === "1") {
+    showPayStatus("Если оплата прошла, срок обновится в боте.");
+  }
   document.getElementById("pay-stars")?.addEventListener("click", () => {
     openStarInvoice(offer.invoice);
   });

@@ -1,6 +1,5 @@
 const LOCATIONS = [
   { code: "DE", flag: "🇩🇪" },
-  { code: "FR", flag: "🇫🇷" },
   { code: "UK", flag: "🇬🇧" },
   { code: "KZ", flag: "🇰🇿" },
   { code: "RU", flag: "🇷🇺" },

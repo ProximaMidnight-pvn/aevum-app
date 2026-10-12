@@ -773,8 +773,11 @@ function renderCrypto() {
     window.location.replace("./pay.html" + (window.location.search || ""));
     return;
   }
-  const rub = Number(String(offer.rub).replace(/[^\d]/g, "")) || 0;
-  const digits = { usd: 2, eth: 6, btc: 8, sol: 4 };
+  const quotes = {
+    "1": { btc: "0.00001515", eth: "0.000495", sol: "0.0114", usd: "1.25" },
+    "3": { btc: "0.00004116", eth: "0.001346", sol: "0.0310", usd: "3.39" },
+    "12": { btc: "0.00015286", eth: "0.004999", sol: "0.1152", usd: "12.60" },
+  };
   const catalog = {
     usd: { name: "USD" },
     eth: {
@@ -821,7 +824,6 @@ function renderCrypto() {
   const netBox = document.getElementById("crypto-net");
   const netWrap = document.getElementById("crypto-net-wrap");
   const netList = document.getElementById("crypto-nets");
-  const timer = document.getElementById("rate-timer");
   const txidModal = document.getElementById("txid-modal");
   const back = page.querySelector(".legal-back");
   if (back) back.href = "./pay-method.html" + window.location.search;
@@ -836,9 +838,8 @@ function renderCrypto() {
   const amountOf = (coin) => {
     const ready = rates.quotes && rates.quotes[plan] && rates.quotes[plan][coin];
     if (ready) return ready;
-    const price = Number(rates[coin] || 0);
-    if (!rub || !price) return "";
-    return (rub / price).toFixed(digits[coin]);
+    const local = quotes[plan] && quotes[plan][coin];
+    return local || "";
   };
   const paintQuotes = () => {
     page.querySelectorAll("[data-quote]").forEach((node) => {
@@ -851,16 +852,6 @@ function renderCrypto() {
       const due = amountOf(picked);
       amountLine.textContent = due ? "К переводу: " + due + " " + (picked === "usd" ? "USDT" : picked.toUpperCase()) : "";
     }
-  };
-  const secondsLeft = () => {
-    const mod = Math.floor(Date.now() / 1000) % 60;
-    return mod === 0 ? 60 : 60 - mod;
-  };
-  const paintTimer = () => {
-    const left = secondsLeft();
-    const text = "Курс обновится через " + Math.floor(left / 60) + ":" + String(left % 60).padStart(2, "0");
-    if (timer) timer.textContent = text;
-    return left;
   };
   const loadRates = async () => {
     for (const base of apiBases()) {
@@ -965,7 +956,7 @@ function renderCrypto() {
       return;
     }
     if (!amountOf(picked)) {
-      toast("Курс ещё обновляется.");
+      toast("Сумма недоступна.");
       return;
     }
     if (txidModal) txidModal.hidden = false;
@@ -1004,7 +995,7 @@ function renderCrypto() {
         }
         if (data && data.error && data.error !== "unavailable") {
           if (data.error === "owner") toast("У вас уже безлимитный доступ.");
-          else if (data.error === "rate") toast("Курс ещё обновляется.");
+          else if (data.error === "rate") toast("Сумма недоступна.");
           else toast("Не удалось отправить хэш.");
           busy = false;
           return;
@@ -1022,14 +1013,8 @@ function renderCrypto() {
     if (input) input.value = "";
     toast("Хэш отправлен администратору.");
   });
-  let previous = secondsLeft();
-  paintTimer();
+  paintQuotes();
   loadRates();
-  window.setInterval(() => {
-    const left = paintTimer();
-    if (left > previous) loadRates();
-    previous = left;
-  }, 1000);
 }
 
 function renderPayMethod() {

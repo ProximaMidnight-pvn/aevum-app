@@ -1,8 +1,8 @@
 const LOCATIONS = [
   { code: "DE", flag: "🇩🇪" },
-  { code: "UK", flag: "🇬🇧" },
   { code: "KZ", flag: "🇰🇿" },
-  { code: "RU", flag: "🇷🇺" },
+  { code: "FI", flag: "🇫🇮" },
+  { code: "UK", flag: "🇬🇧" },
 ];
 
 const PAYMENT_URL = "";
@@ -364,6 +364,7 @@ function renderConfig() {
   const params = new URLSearchParams(window.location.search);
   bindServerKey("de-fold", "de-key", "copy-key", params.get("key") || "");
   bindServerKey("kz-fold", "kz-key", "copy-kz", params.get("kz") || "");
+  bindServerKey("fi-fold", "fi-key", "copy-fi", params.get("fi") || "");
 }
 
 function renderLocations() {
@@ -397,7 +398,7 @@ function toast(text) {
   }, 2200);
 }
 
-const PROFILE_FIELDS = ["config", "key", "kz", "until", "uid", "tokens", "refs", "api"];
+const PROFILE_FIELDS = ["config", "key", "kz", "fi", "until", "uid", "tokens", "refs", "api"];
 const PROFILE_STORE = "aevum-profile";
 
 function profileFromParams(params) {

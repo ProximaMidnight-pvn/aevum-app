@@ -354,6 +354,7 @@ button {
 .pulse-uk::after,
 .pulse-kz::after,
 .pulse-fi::after,
+.pulse-pl::after,
 .pulse-ru::after {
   content: "";
   position: absolute;
@@ -387,6 +388,10 @@ button {
   animation-delay: 2.4s;
 }
 
+.pulse-pl::after {
+  animation-delay: 3s;
+}
+
 .pulse-ru::after {
   animation-delay: 3s;
 }
@@ -397,6 +402,7 @@ button {
   .pulse-uk::after,
   .pulse-kz::after,
   .pulse-fi::after,
+  .pulse-pl::after,
   .pulse-ru::after {
     animation: none;
   }

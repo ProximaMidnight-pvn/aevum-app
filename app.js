@@ -627,7 +627,7 @@ function bindOfferPicks() {
 }
 
 const TOKEN_COST = { "1": 2, "3": 6, "12": 24 };
-const TOKEN_API = "https://aevumapp.ru";
+const TOKEN_API = "https://aevumvpn.com";
 let tokenSpendBusy = false;
 
 function tokenBalance() {

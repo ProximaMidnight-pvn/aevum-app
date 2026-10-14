@@ -22,6 +22,14 @@ const DOWNLOADS = [
         name: "Shadowrocket",
         url: "https://apps.apple.com/app/shadowrocket/id932747118?platform=mac",
       },
+      {
+        name: "Hiddify",
+        url: "https://apps.apple.com/app/hiddify-proxy-vpn/id6596777532?platform=mac",
+      },
+      {
+        name: "Streisand",
+        url: "https://apps.apple.com/app/streisand/id6450534064?platform=mac",
+      },
     ],
   },
   {
@@ -37,6 +45,14 @@ const DOWNLOADS = [
         name: "Shadowrocket",
         url: "https://apps.apple.com/app/shadowrocket/id932747118",
       },
+      {
+        name: "Hiddify",
+        url: "https://apps.apple.com/app/hiddify-proxy-vpn/id6596777532",
+      },
+      {
+        name: "Streisand",
+        url: "https://apps.apple.com/app/streisand/id6450534064",
+      },
     ],
   },
   {
@@ -48,6 +64,18 @@ const DOWNLOADS = [
         name: "Happ",
         url: "https://play.google.com/store/apps/details?id=com.happproxy",
       },
+      {
+        name: "Hiddify",
+        url: "https://play.google.com/store/apps/details?id=app.hiddify.com",
+      },
+      {
+        name: "v2rayNG",
+        url: "https://github.com/2dust/v2rayNG/releases/latest",
+      },
+      {
+        name: "NekoBox",
+        url: "https://github.com/MatsuriDayo/NekoBoxForAndroid/releases/latest",
+      },
     ],
   },
   {
@@ -58,6 +86,10 @@ const DOWNLOADS = [
       {
         name: "Happ",
         url: "https://github.com/Happ-proxy/happ-desktop/releases/latest/download/setup-Happ.x64.exe",
+      },
+      {
+        name: "Hiddify",
+        url: "https://github.com/hiddify/hiddify-app/releases/latest",
       },
     ],
   },
